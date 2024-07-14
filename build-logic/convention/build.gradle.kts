@@ -3,13 +3,15 @@ plugins {
 }
 
 group = "app.skypub.project.buildlogic"
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 dependencies {
-    compileOnly(libs.plugins.androidApplication.toDep())
-    compileOnly(libs.plugins.androidLibrary.toDep())
-    compileOnly(libs.plugins.jetbrainsCompose.toDep())
-    compileOnly(libs.plugins.kotlinMultiplatform.toDep())
-    compileOnly(libs.plugins.compose.compiler.toDep())
+    compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.compose.gradlePlugin)
 }
 
 fun Provider<PluginDependency>.toDep() = map {
@@ -26,12 +28,12 @@ tasks {
 gradlePlugin {
     plugins {
         register("kotlinMultiplatform"){
-            id = "app.skypub.project.kotlinMultiplatform"
+            id = "app.skypub.convention.kotlinMultiplatform"
             implementationClass = "KotlinMultiplatformConventionPlugin"
         }
         register("composeMultiplatform"){
-            id = "app.skypub.project.composeMultiplatform"
-            implementationClass = "ComposeMultiplatformConventionPlugin"
+            id = "app.skypub.convention.composeMultiplatform"
+            implementationClass = "ComposeMultiPlatformConventionPlugin"
         }
     }
 }
