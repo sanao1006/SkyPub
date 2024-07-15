@@ -42,6 +42,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(projects.feature.auth)
+            implementation(libs.voyager)
         }
     }
 }
