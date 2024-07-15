@@ -1,4 +1,4 @@
-package app.skypub.project
+package app.skypub.convention
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog

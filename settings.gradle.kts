@@ -30,4 +30,4 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
-include(":feature:auth")
+include("feature:auth")

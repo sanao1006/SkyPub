@@ -1,4 +1,4 @@
-package app.skypub.project
+package app.skypub.convention
 
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.JavaVersion
