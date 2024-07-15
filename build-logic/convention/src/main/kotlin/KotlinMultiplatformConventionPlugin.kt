@@ -12,7 +12,7 @@ class KotlinMultiplatformConventionPlugin : Plugin<Project> {
         with(pluginManager) {
             apply(libs.findPlugin("kotlinMultiplatform").get().get().pluginId)
             apply(libs.findPlugin("androidLibrary").get().get().pluginId)
-//            apply(libs.findPlugin("kotlin.serialization").get().get().pluginId)
+            apply(libs.findPlugin("kotlinXserialization").get().get().pluginId)
         }
         extensions.configure<LibraryExtension>(::configureKotlinAndroid)
         extensions.configure<KotlinMultiplatformExtension> {
