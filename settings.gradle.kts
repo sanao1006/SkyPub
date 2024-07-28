@@ -32,3 +32,4 @@ dependencyResolutionManagement {
 include(":composeApp")
 include("feature:auth")
 include("core:network")
+include("core:data")
