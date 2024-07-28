@@ -6,17 +6,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import di.initKoin
+import app.skypub.feature.auth.AuthViewModel
+import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initKoin(
-
-
-        )
         setContent {
-            App()
+            KoinContext {
+                val viewmodel: AuthViewModel = koinInject<AuthViewModel>()
+                App()
+            }
         }
     }
 }

@@ -5,14 +5,22 @@ import app.skypub.data.repository.impl.AuthRepositoryImpl
 import app.skypub.feature.auth.AuthViewModel
 import app.skypub.network.module.bskyModule
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
+fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
-        appDeclaration()
-        modules(networkModule())
+        config?.invoke(this)
+        modules(allModules, platformModule)
     }
+}
+
+private val allModules = module {
+    networkModule()
+}
 
 private fun networkModule() = module {
     single { bskyModule }
@@ -22,6 +30,6 @@ private fun networkModule() = module {
 }
 
 private fun bskyRepositoryModule() = module {
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
-    factory { AuthViewModel(get()) }
+    singleOf(::AuthRepositoryImpl).bind<AuthRepository>()
+    viewModelOf(::AuthViewModel)
 }
