@@ -21,12 +21,10 @@ class AuthScreenNavigation : Screen {
     override fun Content() {
         val viewModel: AuthViewModel = koinInject<AuthViewModel>()
         val navigator = LocalNavigator.currentOrThrow
-
         Column(
             modifier = Modifier.padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            viewModel.hello()
             Text(
                 text = "Hello! choose platform!",
                 style = MaterialTheme.typography.headlineMedium,

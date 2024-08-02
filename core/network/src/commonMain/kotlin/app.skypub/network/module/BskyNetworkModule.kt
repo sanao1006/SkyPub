@@ -1,17 +1,13 @@
 package app.skypub.network.module
 
+import app.skypub.network.BlueskyApiDataSource
 import app.skypub.network.Client
-import de.jensklingenberg.ktorfit.Ktorfit
-import io.ktor.client.HttpClient
+import app.skypub.network.service.BlueskyApi
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val bskyModule = module {
-    val baseUrl = "https://bsky.social/xrpc"
-    single {
-        val ktorClient: HttpClient = Client().client
-        Ktorfit.Builder()
-            .httpClient(ktorClient)
-            .baseUrl(baseUrl)
-            .build()
-    }
+val blueskyModule = module {
+    single { Client().client }
+    singleOf(::BlueskyApiDataSource).bind<BlueskyApi>()
 }

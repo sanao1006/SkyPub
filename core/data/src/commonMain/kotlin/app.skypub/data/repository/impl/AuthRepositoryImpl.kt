@@ -1,20 +1,17 @@
 package app.skypub.data.repository.impl
 
 import app.skypub.data.repository.AuthRepository
-import io.github.aakira.napier.Napier
+import app.skypub.network.BlueskyApiDataSource
+import app.skypub.network.model.CreateSessionResponse
 
 class AuthRepositoryImpl(
-
+    private val blueskyApi: BlueskyApiDataSource
 ) : AuthRepository {
 
-//    override suspend fun createSession(
-//        identifier: String,
-//        password: String
-//    ): CreateSessionResponse {
-//        return bskyService.createSession(identifier, password)
-//    }
-
-    override fun hello() {
-        Napier.d("Hello from AuthRepositoryImpl", tag = "ray")
+    override suspend fun createSession(
+        identifier: String,
+        password: String
+    ): CreateSessionResponse {
+        return blueskyApi.createSession(identifier, password)
     }
 }

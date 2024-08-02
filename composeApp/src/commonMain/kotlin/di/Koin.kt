@@ -1,35 +1,26 @@
 package di
 
-import app.skypub.data.repository.AuthRepository
-import app.skypub.data.repository.impl.AuthRepositoryImpl
+import app.skypub.data.repository.di.dataModule
 import app.skypub.feature.auth.AuthViewModel
-import app.skypub.network.module.bskyModule
+import app.skypub.network.module.blueskyModule
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
-fun initKoin(config: KoinAppDeclaration? = null) {
+fun initKoin(config: KoinAppDeclaration = {}) {
     startKoin {
-        config?.invoke(this)
-        modules(allModules, platformModule)
+        config()
+        modules(
+            blueskyModule,
+            platformModule,
+            dataRepositoryModule
+        )
     }
 }
 
-private val allModules = module {
-    networkModule()
-}
 
-private fun networkModule() = module {
-    single { bskyModule }
-    module {
-        bskyRepositoryModule()
-    }
-}
-
-private fun bskyRepositoryModule() = module {
-    singleOf(::AuthRepositoryImpl).bind<AuthRepository>()
+val dataRepositoryModule = module {
+    includes(dataModule)
     viewModelOf(::AuthViewModel)
 }

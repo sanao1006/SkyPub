@@ -6,6 +6,6 @@ import di.initKoin
 class SkyPubApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        initKoin()
+        initKoin {}
     }
 }
