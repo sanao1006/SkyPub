@@ -3,6 +3,7 @@ package app.skypub.feature.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.skypub.network.service.BlueskyApi
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val authRepository: BlueskyApi) : ViewModel() {
@@ -10,9 +11,13 @@ class AuthViewModel(private val authRepository: BlueskyApi) : ViewModel() {
         authRepository.createSession(identifier, password)
     }
 
-    fun aa(a: String, b: String) {
+    fun login(identifier: String, password: String) {
         viewModelScope.launch {
-            createSession(a, b)
+            try {
+                createSession(identifier, password)
+            } catch (e: Exception) {
+                Napier.e(tag = "loginError") { "message: ${e.message}" }
+            }
         }
     }
 }

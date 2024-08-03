@@ -6,6 +6,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import kotlinx.serialization.Serializable
 
 class BlueskyApiDataSource(
     private val client: HttpClient
@@ -17,18 +20,23 @@ class BlueskyApiDataSource(
         return client.post(
             "$BASE_URL/com.atproto.server.createSession"
         ) {
+            contentType(ContentType.Application.Json)
             setBody(
-                """
-                {
-                    "identifier": "$identifier",
-                    "password": "$password"
-                }
-                """.trimIndent()
+                BlueskyAuthInput(
+                    identifier = identifier,
+                    password = password
+                )
             )
-        }.body()
+        }.body<CreateSessionResponse>()
     }
 
     companion object {
         val BASE_URL = "https://bsky.social/xrpc"
     }
 }
+
+@Serializable
+data class BlueskyAuthInput(
+    val identifier: String,
+    val password: String
+)

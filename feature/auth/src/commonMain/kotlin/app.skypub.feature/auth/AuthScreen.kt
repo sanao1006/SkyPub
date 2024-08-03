@@ -14,12 +14,10 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.koin.compose.koinInject
 
 class AuthScreenNavigation : Screen {
     @Composable
     override fun Content() {
-        val viewModel: AuthViewModel = koinInject<AuthViewModel>()
         val navigator = LocalNavigator.currentOrThrow
         Column(
             modifier = Modifier.padding(32.dp),

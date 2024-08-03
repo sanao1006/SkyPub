@@ -41,6 +41,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.koin.compose.koinInject
 
 
 data class LoginScreen(val platform: Platform) : Screen {
@@ -48,6 +49,7 @@ data class LoginScreen(val platform: Platform) : Screen {
     @Composable
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
+        val viewModel: AuthViewModel = koinInject<AuthViewModel>()
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -69,7 +71,10 @@ data class LoginScreen(val platform: Platform) : Screen {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when (platform) {
-                    Platform.Bluesky -> BlueSkyLoginScreen()
+                    Platform.Bluesky -> BlueSkyLoginScreen(
+                        onClick = { identifier, password -> viewModel.login(identifier, password) }
+                    )
+
                     Platform.Misskey -> MisskeyLoginScreen()
                 }
             }
@@ -78,7 +83,9 @@ data class LoginScreen(val platform: Platform) : Screen {
 }
 
 @Composable
-fun BlueSkyLoginScreen() {
+fun BlueSkyLoginScreen(
+    onClick: (String, String) -> Unit = { identifier, password -> }
+) {
     var userName by rememberSaveable { mutableStateOf("") }
     var passWord by rememberSaveable { mutableStateOf("") }
     Column(horizontalAlignment = Alignment.Start) {
@@ -131,7 +138,7 @@ fun BlueSkyLoginScreen() {
     }
     Spacer(modifier = Modifier.height(8.dp))
     Button(
-        onClick = {},
+        onClick = { onClick(userName, passWord) },
         enabled = userName.isNotBlank() && passWord.isNotBlank(),
         modifier = Modifier.fillMaxWidth().wrapContentHeight()
     ) {
