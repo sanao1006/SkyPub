@@ -8,6 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
 
 actual class Client actual constructor() {
@@ -26,12 +27,16 @@ actual class Client actual constructor() {
             level = LogLevel.ALL
         }
         install(ContentNegotiation) {
-            json(json = kotlinx.serialization.json.Json {
-                ignoreUnknownKeys = true
-                isLenient = false
-                allowSpecialFloatingPointValues = true
-                useArrayPolymorphism = false
-            })
+            json(
+                json = kotlinx.serialization.json.Json {
+                    ignoreUnknownKeys = true
+                    isLenient = false
+                    allowSpecialFloatingPointValues = true
+                    useArrayPolymorphism = false
+                },
+                contentType = ContentType.Application.Json
+
+            )
         }
     }
 }
