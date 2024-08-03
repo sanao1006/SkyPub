@@ -2,11 +2,11 @@ package app.skypub.feature.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.skypub.network.service.BlueskyApi
+import app.skypub.data.repository.AuthRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val authRepository: BlueskyApi) : ViewModel() {
+class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     suspend fun createSession(identifier: String, password: String) {
         authRepository.createSession(identifier, password)
     }
