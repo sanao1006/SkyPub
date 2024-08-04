@@ -1,6 +1,7 @@
 package di
 
 import app.skypub.data.repository.di.dataModule
+import app.skypub.datastore.di.dataStoreModule
 import app.skypub.feature.auth.AuthViewModel
 import app.skypub.network.module.blueskyModule
 import org.koin.core.context.startKoin
@@ -14,7 +15,8 @@ fun initKoin(config: KoinAppDeclaration = {}) {
         modules(
             blueskyModule,
             platformModule,
-            dataRepositoryModule
+            dataRepositoryModule,
+            dataStoreModule
         )
     }
 }
