@@ -50,6 +50,7 @@ data class LoginScreen(val platform: Platform) : Screen {
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
         val viewModel: AuthViewModel = koinInject<AuthViewModel>()
+        val isLoginSuccess = viewModel.isLoginSuccess.value
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -72,6 +73,7 @@ data class LoginScreen(val platform: Platform) : Screen {
             ) {
                 when (platform) {
                     Platform.Bluesky -> BlueSkyLoginScreen(
+                        isLoginSuccess = isLoginSuccess,
                         onClick = { identifier, password -> viewModel.login(identifier, password) }
                     )
 
@@ -84,6 +86,7 @@ data class LoginScreen(val platform: Platform) : Screen {
 
 @Composable
 fun BlueSkyLoginScreen(
+    isLoginSuccess: Boolean?,
     onClick: (String, String) -> Unit = { identifier, password -> }
 ) {
     var userName by rememberSaveable { mutableStateOf("") }
@@ -144,7 +147,10 @@ fun BlueSkyLoginScreen(
     ) {
         Text("Login")
     }
-
+    Spacer(modifier = Modifier.height(8.dp))
+    if (isLoginSuccess != null && !isLoginSuccess) {
+        Text("Login Error")
+    }
 }
 
 @Composable
