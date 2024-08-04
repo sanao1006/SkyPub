@@ -7,6 +7,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.voyager)
+            implementation(projects.core.data)
+            api(projects.core.network)
         }
     }
 }
