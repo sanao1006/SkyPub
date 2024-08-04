@@ -1,17 +1,28 @@
 package app.skypub.network
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetTimeLineResponse
 import app.skypub.network.service.BlueskyApi
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 
 class BlueskyApiDataSource(
-    private val client: HttpClient
+    private val client: HttpClient,
+    private val dataStore: DataStore<Preferences>
 ) : BlueskyApi {
     override suspend fun createSession(
         identifier: String,
@@ -28,6 +39,18 @@ class BlueskyApiDataSource(
                 )
             )
         }.body<CreateSessionResponse>()
+    }
+
+    override fun getTimeLine(
+        algorithm: String?,
+        limit: Int?,
+        cursor: String?
+    ): Flow<GetTimeLineResponse> = flow {
+        val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+        client.get("$BASE_URL/app.bsky.feed.getTimeline") {
+            contentType(ContentType.Application.Json)
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+        }.body()
     }
 
     companion object {

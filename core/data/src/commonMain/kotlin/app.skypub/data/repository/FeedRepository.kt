@@ -1,15 +1,9 @@
-package app.skypub.network.service
+package app.skypub.data.repository
 
-import app.skypub.network.model.CreateSessionResponse
 import app.skypub.network.model.GetTimeLineResponse
 import kotlinx.coroutines.flow.Flow
 
-interface BlueskyApi {
-    suspend fun createSession(
-        identifier: String,
-        password: String
-    ): CreateSessionResponse
-
+interface FeedRepository {
     fun getTimeLine(
         algorithm: String? = null,
         limit: Int? = null,
