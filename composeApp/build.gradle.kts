@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.ktor.client.android)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -48,6 +49,7 @@ kotlin {
             implementation(projects.core.network)
             implementation(projects.core.data)
             implementation(projects.core.datastore)
+            api(libs.napier)
         }
     }
 }

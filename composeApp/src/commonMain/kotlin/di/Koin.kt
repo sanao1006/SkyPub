@@ -9,16 +9,14 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-fun initKoin(config: KoinAppDeclaration = {}) {
-    startKoin {
-        config()
-        modules(
-            blueskyModule,
-            platformModule,
-            dataRepositoryModule,
-            dataStoreModule
-        )
-    }
+fun initKoin(config: KoinAppDeclaration = {}) = startKoin {
+    config()
+    modules(
+        blueskyModule,
+        platformModule,
+        dataRepositoryModule,
+        dataStoreModule
+    )
 }
 
 
