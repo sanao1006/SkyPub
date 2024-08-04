@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -50,6 +51,7 @@ data class LoginScreen(val platform: Platform) : Screen {
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
         val viewModel: AuthViewModel = koinInject<AuthViewModel>()
+        val isLoginSuccess = viewModel.isLoginSuccess.collectAsState().value
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -72,6 +74,7 @@ data class LoginScreen(val platform: Platform) : Screen {
             ) {
                 when (platform) {
                     Platform.Bluesky -> BlueSkyLoginScreen(
+                        isLoginSuccess = isLoginSuccess,
                         onClick = { identifier, password -> viewModel.login(identifier, password) }
                     )
 
@@ -84,6 +87,7 @@ data class LoginScreen(val platform: Platform) : Screen {
 
 @Composable
 fun BlueSkyLoginScreen(
+    isLoginSuccess: Boolean?,
     onClick: (String, String) -> Unit = { identifier, password -> }
 ) {
     var userName by rememberSaveable { mutableStateOf("") }
@@ -144,7 +148,10 @@ fun BlueSkyLoginScreen(
     ) {
         Text("Login")
     }
-
+    Spacer(modifier = Modifier.height(8.dp))
+    if (isLoginSuccess != null && !isLoginSuccess) {
+        Text("Login Error")
+    }
 }
 
 @Composable

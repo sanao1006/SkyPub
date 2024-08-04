@@ -6,10 +6,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.voyager)
-            implementation(projects.core.data)
-            implementation(projects.core.network)
-            implementation(projects.core.datastore)
+            api(libs.androidx.datastore)
+            api(libs.androidx.datastore.preference)
         }
     }
 }
