@@ -83,7 +83,13 @@ data class LoginScreen(val platform: Platform) : Screen {
                     Platform.Bluesky -> BlueSkyLoginScreen(
                         hostState = hostState,
                         isLoginSuccess = isLoginSuccess,
-                        onClick = { identifier, password -> viewModel.login(identifier, password) }
+                        onClick = { identifier, password ->
+                            viewModel.login(
+                                identifier,
+                                password,
+                                navigator
+                            )
+                        }
                     )
 
                     Platform.Misskey -> MisskeyLoginScreen()

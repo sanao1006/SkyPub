@@ -7,6 +7,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.skypub.data.repository.AuthRepository
+import app.skypub.home.HomeScreen
+import app.skypub.network.model.CreateSessionResponse
+import cafe.adriel.voyager.navigator.Navigator
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,26 +23,32 @@ class AuthViewModel(
     private var _isLoginSuccess: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val isLoginSuccess: StateFlow<Boolean?> = _isLoginSuccess.asStateFlow()
 
-    suspend fun createSession(identifier: String, password: String) {
-        runCatching {
+    private suspend fun createSession(
+        identifier: String,
+        password: String
+    ): Result<CreateSessionResponse> {
+        return runCatching {
             authRepository.createSession(identifier, password)
-        }.onSuccess { response ->
-            dataStore.edit {
-                val accessJwtKey = stringPreferencesKey("access_jwt")
-                val refreshJwtKey = stringPreferencesKey("refresh_jwt")
-                it[accessJwtKey] = response.accessJwt
-                it[refreshJwtKey] = response.refreshJwt
-            }
-            _isLoginSuccess.value = true
-        }.onFailure {
-            _isLoginSuccess.value = false
-            Napier.e(tag = "createSessionError") { "message: ${it.message}" }
         }
     }
 
-    fun login(identifier: String, password: String) {
+    fun login(identifier: String, password: String, navigator: Navigator) {
         viewModelScope.launch {
             createSession(identifier, password)
+                .onSuccess { response ->
+                    dataStore.edit {
+                        val accessJwtKey = stringPreferencesKey("access_jwt")
+                        val refreshJwtKey = stringPreferencesKey("refresh_jwt")
+                        it[accessJwtKey] = response.accessJwt
+                        it[refreshJwtKey] = response.refreshJwt
+                    }
+                    _isLoginSuccess.value = true
+                    navigator.popUntilRoot()
+                    navigator.replace(HomeScreen())
+                }.onFailure {
+                    _isLoginSuccess.value = false
+                    Napier.e(tag = "createSessionError") { "message: ${it.message}" }
+                }
         }
     }
 }
