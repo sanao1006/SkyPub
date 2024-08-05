@@ -16,6 +16,7 @@ class HomeScreen : Screen {
         val viewmodel: HomeViewModel = koinInject<HomeViewModel>()
         Scaffold {
             Column {
+                Text(text = "Home")
                 val feeds = viewmodel.feed.value
                 LazyColumn {
                     items(feeds) { feed ->

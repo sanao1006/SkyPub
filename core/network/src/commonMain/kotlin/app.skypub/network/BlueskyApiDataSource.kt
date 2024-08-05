@@ -53,6 +53,16 @@ class BlueskyApiDataSource(
         }.body()
     }
 
+    override suspend fun refreshToken(): CreateSessionResponse {
+        return client.post(
+            "$BASE_URL/com.atproto.server.refreshSession"
+        ) {
+            contentType(ContentType.Application.Json)
+            val refreshJwt = dataStore.data.first()[stringPreferencesKey("refresh_jwt")] ?: ""
+            header(HttpHeaders.Authorization, "Bearer $refreshJwt")
+        }.body()
+    }
+
     companion object {
         val BASE_URL = "https://bsky.social/xrpc"
     }

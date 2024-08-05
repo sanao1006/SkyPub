@@ -15,4 +15,6 @@ interface BlueskyApi {
         limit: Int? = null,
         cursor: String? = null
     ): Flow<GetTimeLineResponse>
+
+    suspend fun refreshToken(): CreateSessionResponse
 }
