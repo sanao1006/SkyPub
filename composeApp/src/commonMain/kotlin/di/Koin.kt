@@ -3,6 +3,7 @@ package di
 import app.skypub.data.repository.di.dataModule
 import app.skypub.datastore.di.dataStoreModule
 import app.skypub.feature.auth.AuthViewModel
+import app.skypub.home.HomeViewModel
 import app.skypub.network.module.blueskyModule
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
@@ -23,4 +24,5 @@ fun initKoin(config: KoinAppDeclaration = {}) = startKoin {
 val dataRepositoryModule = module {
     includes(dataModule)
     viewModelOf(::AuthViewModel)
+    viewModelOf(::HomeViewModel)
 }
