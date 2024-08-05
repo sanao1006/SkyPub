@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.screen.Screen
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.koin.compose.koinInject
 
 class HomeScreen : Screen {
@@ -22,6 +24,9 @@ class HomeScreen : Screen {
                 LazyColumn {
                     items(feeds.value) { feed ->
                         Text(text = feed.post.author.displayName)
+                        Text(
+                            text = feed.post.record.jsonObject["text"]?.jsonPrimitive?.content ?: ""
+                        )
                     }
                 }
             }
