@@ -47,10 +47,11 @@ class BlueskyApiDataSource(
         cursor: String?
     ): Flow<GetTimeLineResponse> = flow {
         val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
-        client.get("$BASE_URL/app.bsky.feed.getTimeline") {
+        val request = client.get("$BASE_URL/app.bsky.feed.getTimeline") {
             contentType(ContentType.Application.Json)
             header(HttpHeaders.Authorization, "Bearer $accessJwt")
-        }.body()
+        }
+        emit(request.body())
     }
 
     override suspend fun refreshToken(): CreateSessionResponse {

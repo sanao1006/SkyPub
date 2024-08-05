@@ -25,7 +25,7 @@ data class Post(
     val cid: String,
     val author: Author,
     val record: JsonElement,
-    val embed: JsonElement,
+    val embed: JsonElement? = null,
     val replyCount: Int,
     val repostCount: Int,
     val likeCount: Int,
@@ -41,7 +41,7 @@ data class Author(
     val handle: String,
     val displayName: String,
     val avatar: String,
-    val associated: Associated,
+    val associated: Associated? = null,
     val viewer: Viewer,
     val labels: List<Label>,
     val createdAt: String
@@ -49,10 +49,10 @@ data class Author(
 
 @Serializable
 data class Associated(
-    val lists: Int,
-    val feedgens: Int,
-    val starterPacks: Int,
-    val labeler: Boolean,
+    val lists: Int? = null,
+    val feedgens: Int? = null,
+    val starterPacks: Int? = null,
+    val labeler: Boolean? = null,
     val chat: Chat
 )
 
@@ -63,9 +63,9 @@ data class Chat(
 
 @Serializable
 data class Viewer(
-    val muted: Boolean,
+    val muted: Boolean? = null,
     val mutedByList: MutedByList? = null,
-    val blockedBy: Boolean,
+    val blockedBy: Boolean? = null,
     val blocking: String? = null,
     val blockingByList: BlockingByList? = null,
     val following: String? = null,
@@ -123,15 +123,15 @@ data class KnownFollowers(
 
 @Serializable
 data class Label(
-    val ver: Int,
+    val ver: Int? = null,
     val src: String,
     val uri: String,
     val cid: String,
     val `val`: String,
-    val neg: Boolean,
+    val neg: Boolean? = null,
     val cts: String,
     val exp: String? = null,
-    val sig: String
+    val sig: String? = null
 )
 
 @Serializable
@@ -165,5 +165,5 @@ data class ThreadGateListViewer(
 data class Reply(
     val root: JsonElement,
     val parent: JsonElement,
-    val grandparentAuthor: Author
+    val grandparentAuthor: Author? = null,
 )

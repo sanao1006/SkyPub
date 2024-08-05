@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.screen.Screen
 import org.koin.compose.koinInject
 
@@ -17,9 +18,9 @@ class HomeScreen : Screen {
         Scaffold {
             Column {
                 Text(text = "Home")
-                val feeds = viewmodel.feed.value
+                val feeds = viewmodel.feed.collectAsState()
                 LazyColumn {
-                    items(feeds) { feed ->
+                    items(feeds.value) { feed ->
                         Text(text = feed.post.author.displayName)
                     }
                 }
