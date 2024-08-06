@@ -1,5 +1,6 @@
 package di
 
+import AppViewModel
 import app.skypub.data.repository.di.dataModule
 import app.skypub.datastore.di.dataStoreModule
 import app.skypub.feature.auth.AuthViewModel
@@ -25,4 +26,5 @@ val dataRepositoryModule = module {
     includes(dataModule)
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::AppViewModel)
 }
