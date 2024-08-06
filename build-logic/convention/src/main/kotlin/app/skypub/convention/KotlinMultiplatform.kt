@@ -40,6 +40,8 @@ internal fun Project.configureKotlinMultiplatform(
                 api(libs.findLibrary("koin.core").get())
                 api(libs.findLibrary("koin.compose").get())
                 api(libs.findLibrary("koin.compose.viewmodel").get())
+                api(libs.findLibrary("arrow-core").get())
+                api(libs.findLibrary("arrow-fx-coroutines").get())
                 implementation(libs.findLibrary("napier").get())
             }
 
