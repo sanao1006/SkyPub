@@ -3,9 +3,13 @@ package app.skypub.network
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import app.skypub.network.model.CreateSessionError
 import app.skypub.network.model.CreateSessionResponse
 import app.skypub.network.model.GetTimeLineResponse
 import app.skypub.network.service.BlueskyApi
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -14,6 +18,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -27,8 +32,8 @@ class BlueskyApiDataSource(
     override suspend fun createSession(
         identifier: String,
         password: String
-    ): CreateSessionResponse {
-        return client.post(
+    ): Either<CreateSessionError, CreateSessionResponse> {
+        val request = client.post(
             "$BASE_URL/com.atproto.server.createSession"
         ) {
             contentType(ContentType.Application.Json)
@@ -38,7 +43,16 @@ class BlueskyApiDataSource(
                     password = password
                 )
             )
-        }.body<CreateSessionResponse>()
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<CreateSessionResponse>().right()
+            }
+
+            else -> {
+                request.body<CreateSessionError>().left()
+            }
+        }
     }
 
     override fun getTimeLine(

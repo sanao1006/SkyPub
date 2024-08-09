@@ -9,3 +9,9 @@ data class CreateSessionResponse(
     val handle: String,
     val did: String,
 )
+
+@Serializable
+data class CreateSessionError(
+    val error: String,
+    val message: String,
+)

@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.skypub.data.repository.AuthRepository
 import app.skypub.home.HomeScreen
+import app.skypub.network.model.CreateSessionError
 import app.skypub.network.model.CreateSessionResponse
+import arrow.core.Either
 import cafe.adriel.voyager.navigator.Navigator
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,29 +28,30 @@ class AuthViewModel(
     private suspend fun createSession(
         identifier: String,
         password: String
-    ): Result<CreateSessionResponse> {
-        return runCatching {
-            authRepository.createSession(identifier, password)
-        }
+    ): Either<CreateSessionError, CreateSessionResponse> {
+        return authRepository.createSession(identifier, password)
     }
 
     fun login(identifier: String, password: String, navigator: Navigator) {
         viewModelScope.launch {
-            createSession(identifier, password)
-                .onSuccess { response ->
+            when (val response = createSession(identifier, password)) {
+                is Either.Left -> {
+                    _isLoginSuccess.value = false
+                    Napier.e(tag = "createSessionError") { "message: ${response.value.message}" }
+                }
+
+                is Either.Right -> {
                     dataStore.edit {
                         val accessJwtKey = stringPreferencesKey("access_jwt")
                         val refreshJwtKey = stringPreferencesKey("refresh_jwt")
-                        it[accessJwtKey] = response.accessJwt
-                        it[refreshJwtKey] = response.refreshJwt
+                        it[accessJwtKey] = response.value.accessJwt
+                        it[refreshJwtKey] = response.value.refreshJwt
                     }
                     _isLoginSuccess.value = true
                     navigator.popUntilRoot()
                     navigator.replace(HomeScreen())
-                }.onFailure {
-                    _isLoginSuccess.value = false
-                    Napier.e(tag = "createSessionError") { "message: ${it.message}" }
                 }
+            }
         }
     }
 }
