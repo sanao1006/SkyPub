@@ -19,10 +19,11 @@ class AppViewModel(
     init {
         viewModelScope.launch {
             initializeRepository.initializeToken()
+            updateLoginState()
         }
     }
 
-    fun isAlreadyLoggedIn() {
+    private fun updateLoginState() {
         viewModelScope.launch {
             val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")]
             val refreshJwt = dataStore.data.first()[stringPreferencesKey("refresh_jwt")]

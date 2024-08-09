@@ -6,23 +6,33 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import app.skypub.data.repository.InitializeRepository
 import app.skypub.network.BlueskyApiDataSource
+import app.skypub.network.model.CreateSessionError
 import app.skypub.network.model.CreateSessionResponse
+import arrow.core.Either
+import io.github.aakira.napier.Napier
 
 class InitializeRepositoryImpl(
     private val blueskyApiDataSource: BlueskyApiDataSource,
     private val dataStore: DataStore<Preferences>
 ) : InitializeRepository {
-    override suspend fun refreshToken(): CreateSessionResponse {
+    override suspend fun refreshToken(): Either<CreateSessionError, CreateSessionResponse> {
         return blueskyApiDataSource.refreshToken()
     }
 
     override suspend fun initializeToken() {
-        val response = refreshToken()
-        dataStore.edit {
-            val accessJwtKey = stringPreferencesKey("access_jwt")
-            val refreshJwtKey = stringPreferencesKey("refresh_jwt")
-            it[accessJwtKey] = response.accessJwt
-            it[refreshJwtKey] = response.refreshJwt
+        when (val response = refreshToken()) {
+            is Either.Right -> {
+                dataStore.edit {
+                    val accessJwtKey = stringPreferencesKey("access_jwt")
+                    val refreshJwtKey = stringPreferencesKey("refresh_jwt")
+                    it[accessJwtKey] = response.value.accessJwt
+                    it[refreshJwtKey] = response.value.refreshJwt
+                }
+            }
+
+            is Either.Left -> {
+                Napier.e(tag = "refreshTokenError") { "message: ${response.value.message}" }
+            }
         }
     }
 }

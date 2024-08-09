@@ -12,6 +12,6 @@ data class CreateSessionResponse(
 
 @Serializable
 data class CreateSessionError(
-    val error: String,
+    val error: String?,
     val message: String,
 )

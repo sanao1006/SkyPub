@@ -68,14 +68,23 @@ class BlueskyApiDataSource(
         emit(request.body())
     }
 
-    override suspend fun refreshToken(): CreateSessionResponse {
-        return client.post(
+    override suspend fun refreshToken(): Either<CreateSessionError, CreateSessionResponse> {
+        val request = client.post(
             "$BASE_URL/com.atproto.server.refreshSession"
         ) {
             contentType(ContentType.Application.Json)
             val refreshJwt = dataStore.data.first()[stringPreferencesKey("refresh_jwt")] ?: ""
             header(HttpHeaders.Authorization, "Bearer $refreshJwt")
-        }.body()
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<CreateSessionResponse>().right()
+            }
+
+            else -> {
+                request.body<CreateSessionError>().left()
+            }
+        }
     }
 
     companion object {
