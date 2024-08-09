@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import app.skypub.data.repository.InitializeRepository
 import app.skypub.network.BlueskyApiDataSource
-import app.skypub.network.model.CreateSessionError
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.RequestErrorResponse
 import arrow.core.Either
 import io.github.aakira.napier.Napier
 
@@ -15,7 +15,7 @@ class InitializeRepositoryImpl(
     private val blueskyApiDataSource: BlueskyApiDataSource,
     private val dataStore: DataStore<Preferences>
 ) : InitializeRepository {
-    override suspend fun refreshToken(): Either<CreateSessionError, CreateSessionResponse> {
+    override suspend fun refreshToken(): Either<RequestErrorResponse, CreateSessionResponse> {
         return blueskyApiDataSource.refreshToken()
     }
 
