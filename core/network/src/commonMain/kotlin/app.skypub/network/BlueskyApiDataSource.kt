@@ -3,11 +3,13 @@ package app.skypub.network
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import app.skypub.network.model.CreateRecordInput
+import app.skypub.network.model.CreateRecordRequestBody
+import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
 import app.skypub.network.model.GetTimeLineResponse
 import app.skypub.network.model.RequestErrorResponse
 import app.skypub.network.service.BlueskyApi
-import app.skypub.network.service.CreateRecordInput
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
@@ -94,8 +96,32 @@ class BlueskyApiDataSource(
         rkey: String,
         validate: Boolean,
         input: CreateRecordInput
-    ) {
-        TODO("Not yet implemented")
+    ): Either<RequestErrorResponse, CreateRecordResponse> {
+        val request = client.post(
+            "$BASE_URL/com.atproto.repo.createRecord"
+        ) {
+            contentType(ContentType.Application.Json)
+            val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+            setBody(
+                CreateRecordRequestBody(
+                    repo = identifier,
+                    collection = collection,
+                    rkey = rkey,
+                    validate = validate,
+                    record = input
+                )
+            )
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<CreateRecordResponse>().right()
+            }
+
+            else -> {
+                request.body<RequestErrorResponse>().left()
+            }
+        }
     }
 
     companion object {
