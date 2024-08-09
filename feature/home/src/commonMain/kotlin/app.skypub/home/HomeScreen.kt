@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -41,6 +43,11 @@ class HomeScreen : Screen {
                             onClick = { selectedItem = index }
                         )
                     }
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {}) {
+                    Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
                 }
             }
         ) {
