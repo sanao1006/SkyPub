@@ -31,6 +31,12 @@ class InitializeRepositoryImpl(
             }
 
             is Either.Left -> {
+                dataStore.edit {
+                    val accessJwtKey = stringPreferencesKey("access_jwt")
+                    val refreshJwtKey = stringPreferencesKey("refresh_jwt")
+                    it.remove(accessJwtKey)
+                    it.remove(refreshJwtKey)
+                }
                 Napier.e(tag = "refreshTokenError") { "message: ${response.value.message}" }
             }
         }
