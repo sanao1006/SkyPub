@@ -30,7 +30,7 @@ data class Post(
     val repostCount: Int,
     val likeCount: Int,
     val indexedAt: String,
-    val viewer: Viewer,
+    val viewer: PostViewer,
     val labels: List<Label>,
     val threadgate: ThreadGate? = null
 )
@@ -48,6 +48,18 @@ data class Author(
 )
 
 @Serializable
+data class Viewer(
+    val muted: Boolean? = null,
+    val mutedByList: MutedByList? = null,
+    val blockedBy: Boolean? = null,
+    val blocking: String? = null,
+    val blockingByList: BlockingByList? = null,
+    val following: String? = null,
+    val followedBy: String? = null,
+    val knownFollowers: KnownFollowers? = null,
+)
+
+@Serializable
 data class Associated(
     val lists: Int? = null,
     val feedgens: Int? = null,
@@ -62,15 +74,7 @@ data class Chat(
 )
 
 @Serializable
-data class Viewer(
-    val muted: Boolean? = null,
-    val mutedByList: MutedByList? = null,
-    val blockedBy: Boolean? = null,
-    val blocking: String? = null,
-    val blockingByList: BlockingByList? = null,
-    val following: String? = null,
-    val followedBy: String? = null,
-    val knownFollowers: KnownFollowers? = null,
+data class PostViewer(
     val repost: String? = null,
     val like: String? = null,
     val threadMuted: Boolean? = null,
@@ -83,15 +87,15 @@ data class MutedByList(
     val cid: String,
     val name: String,
     val purpose: String,
-    val avatar: String,
-    val listItemCount: Int,
-    val labels: List<Label>,
-    val viewer: MutedByListViewer,
-    val indexedAt: String
+    val avatar: String? = null,
+    val listItemCount: Int? = null,
+    val labels: List<Label>? = null,
+    val viewer: MutedOrBlockedByListViewer? = null,
+    val indexedAt: String? = null
 )
 
 @Serializable
-data class MutedByListViewer(
+data class MutedOrBlockedByListViewer(
     val muted: Boolean,
     val blocked: String
 )
@@ -105,20 +109,14 @@ data class BlockingByList(
     val avatar: String,
     val listItemCount: Int,
     val labels: List<Label>,
-    val viewer: BlockingByListViewer,
+    val viewer: MutedOrBlockedByListViewer,
     val indexedAt: String
-)
-
-@Serializable
-data class BlockingByListViewer(
-    val muted: Boolean,
-    val blocked: String
 )
 
 @Serializable
 data class KnownFollowers(
     val count: Int,
-    val followers: List<JsonElement?>
+    val followers: List<Follower>
 )
 
 @Serializable
