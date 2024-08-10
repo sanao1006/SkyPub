@@ -20,7 +20,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
+import app.skypub.post.PostScreen
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.compose.koinInject
@@ -31,6 +34,7 @@ class HomeScreen : Screen {
     override fun Content() {
         val viewmodel: HomeViewModel = koinInject<HomeViewModel>()
         var selectedItem by remember { mutableIntStateOf(0) }
+        val navigator = LocalNavigator.currentOrThrow
 
         Scaffold(
             bottomBar = {
@@ -46,7 +50,7 @@ class HomeScreen : Screen {
                 }
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = {}) {
+                FloatingActionButton(onClick = { navigator.push(PostScreen()) }) {
                     Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
                 }
             }
