@@ -3,7 +3,7 @@ package app.skypub.network.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetProfileResponseData(
+data class GetProfileResponse(
     val did: String,
     val handle: String,
     val displayName: String,
