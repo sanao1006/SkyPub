@@ -25,7 +25,7 @@ interface BlueskyApi {
     suspend fun createRecord(
         identifier: String,
         collection: String,
-        rkey: String = "<= 15 characters",
+        rkey: String? = null,
         validate: Boolean = true,
         input: CreateRecordInput
     ): Either<RequestErrorResponse, CreateRecordResponse>

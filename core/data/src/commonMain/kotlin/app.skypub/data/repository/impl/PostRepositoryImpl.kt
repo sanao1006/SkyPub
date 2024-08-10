@@ -13,7 +13,7 @@ class PostRepositoryImpl(
     override suspend fun createRecord(
         identifier: String,
         collection: String,
-        rkey: String,
+        rkey: String?,
         validate: Boolean,
         input: CreateRecordInput
     ): Either<RequestErrorResponse, CreateRecordResponse> =

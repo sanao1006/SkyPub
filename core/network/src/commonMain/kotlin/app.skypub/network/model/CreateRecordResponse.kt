@@ -12,7 +12,7 @@ data class CreateRecordResponse(
 data class CreateRecordRequestBody(
     val repo: String,
     val collection: String,
-    val rkey: String,
+    val rkey: String? = null,
     val validate: Boolean,
     val record: CreateRecordInput
 )
@@ -20,6 +20,6 @@ data class CreateRecordRequestBody(
 @Serializable
 data class CreateRecordInput(
     val text: String,
-    val createdAt: Long,
+    val createdAt: String,
     val langs: List<String>? = null,
 )

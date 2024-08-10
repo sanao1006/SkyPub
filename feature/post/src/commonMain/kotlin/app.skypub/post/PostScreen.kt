@@ -25,6 +25,7 @@ import androidx.compose.ui.focus.focusRequester
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.koin.compose.koinInject
 
 class PostScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -33,6 +34,7 @@ class PostScreen : Screen {
         var text = rememberSaveable { mutableStateOf("") }
         val focusRequester = remember { FocusRequester() }
         val navigator = LocalNavigator.currentOrThrow
+        val viewModel: PostViewModel = koinInject<PostViewModel>()
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
         }
@@ -46,7 +48,10 @@ class PostScreen : Screen {
                         }
                     },
                     actions = {
-                        Button(onClick = { /* Handle save action */ }) {
+                        Button(onClick = {
+                            viewModel.createPost(text = text.value)
+                            navigator.pop()
+                        }) {
                             Text("Post")
                         }
                     }
