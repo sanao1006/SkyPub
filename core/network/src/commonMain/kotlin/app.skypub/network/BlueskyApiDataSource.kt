@@ -3,9 +3,12 @@ package app.skypub.network
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import app.skypub.network.model.CreateSessionError
+import app.skypub.network.model.CreateRecordInput
+import app.skypub.network.model.CreateRecordRequestBody
+import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
 import app.skypub.network.model.GetTimeLineResponse
+import app.skypub.network.model.RequestErrorResponse
 import app.skypub.network.service.BlueskyApi
 import arrow.core.Either
 import arrow.core.left
@@ -32,7 +35,7 @@ class BlueskyApiDataSource(
     override suspend fun createSession(
         identifier: String,
         password: String
-    ): Either<CreateSessionError, CreateSessionResponse> {
+    ): Either<RequestErrorResponse, CreateSessionResponse> {
         val request = client.post(
             "$BASE_URL/com.atproto.server.createSession"
         ) {
@@ -50,7 +53,7 @@ class BlueskyApiDataSource(
             }
 
             else -> {
-                request.body<CreateSessionError>().left()
+                request.body<RequestErrorResponse>().left()
             }
         }
     }
@@ -68,7 +71,7 @@ class BlueskyApiDataSource(
         emit(request.body())
     }
 
-    override suspend fun refreshToken(): Either<CreateSessionError, CreateSessionResponse> {
+    override suspend fun refreshToken(): Either<RequestErrorResponse, CreateSessionResponse> {
         val request = client.post(
             "$BASE_URL/com.atproto.server.refreshSession"
         ) {
@@ -82,7 +85,41 @@ class BlueskyApiDataSource(
             }
 
             else -> {
-                request.body<CreateSessionError>().left()
+                request.body<RequestErrorResponse>().left()
+            }
+        }
+    }
+
+    override suspend fun createRecord(
+        identifier: String,
+        collection: String,
+        rkey: String?,
+        validate: Boolean,
+        input: CreateRecordInput
+    ): Either<RequestErrorResponse, CreateRecordResponse> {
+        val request = client.post(
+            "$BASE_URL/com.atproto.repo.createRecord"
+        ) {
+            contentType(ContentType.Application.Json)
+            val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+            setBody(
+                CreateRecordRequestBody(
+                    repo = identifier,
+                    collection = collection,
+                    rkey = rkey,
+                    validate = validate,
+                    record = input
+                )
+            )
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<CreateRecordResponse>().right()
+            }
+
+            else -> {
+                request.body<RequestErrorResponse>().left()
             }
         }
     }

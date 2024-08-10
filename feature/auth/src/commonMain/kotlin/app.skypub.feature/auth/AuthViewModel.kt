@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.skypub.data.repository.AuthRepository
 import app.skypub.home.HomeScreen
-import app.skypub.network.model.CreateSessionError
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.RequestErrorResponse
 import arrow.core.Either
 import cafe.adriel.voyager.navigator.Navigator
 import io.github.aakira.napier.Napier
@@ -28,7 +28,7 @@ class AuthViewModel(
     private suspend fun createSession(
         identifier: String,
         password: String
-    ): Either<CreateSessionError, CreateSessionResponse> {
+    ): Either<RequestErrorResponse, CreateSessionResponse> {
         return authRepository.createSession(identifier, password)
     }
 
@@ -44,8 +44,10 @@ class AuthViewModel(
                     dataStore.edit {
                         val accessJwtKey = stringPreferencesKey("access_jwt")
                         val refreshJwtKey = stringPreferencesKey("refresh_jwt")
+                        val identifierKey = stringPreferencesKey("identifier")
                         it[accessJwtKey] = response.value.accessJwt
                         it[refreshJwtKey] = response.value.refreshJwt
+                        it[identifierKey] = identifier
                     }
                     _isLoginSuccess.value = true
                     navigator.popUntilRoot()

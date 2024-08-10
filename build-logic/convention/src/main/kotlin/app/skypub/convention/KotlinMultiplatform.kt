@@ -42,6 +42,7 @@ internal fun Project.configureKotlinMultiplatform(
                 api(libs.findLibrary("koin.compose.viewmodel").get())
                 api(libs.findLibrary("arrow-core").get())
                 api(libs.findLibrary("arrow-fx-coroutines").get())
+                api(libs.findLibrary("kotlinx-datetime").get())
                 implementation(libs.findLibrary("napier").get())
             }
 

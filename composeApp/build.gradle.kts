@@ -56,6 +56,7 @@ kotlin {
             implementation(projects.core.data)
             implementation(projects.core.datastore)
             implementation(projects.feature.home)
+            implementation(projects.feature.post)
             api(libs.napier)
         }
     }

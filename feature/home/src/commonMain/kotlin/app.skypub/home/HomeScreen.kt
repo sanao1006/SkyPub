@@ -1,12 +1,15 @@
 package app.skypub.home
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -19,8 +22,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import app.skypub.post.PostScreen
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.compose.koinInject
@@ -31,6 +39,7 @@ class HomeScreen : Screen {
     override fun Content() {
         val viewmodel: HomeViewModel = koinInject<HomeViewModel>()
         var selectedItem by remember { mutableIntStateOf(0) }
+        val navigator = LocalNavigator.currentOrThrow
 
         Scaffold(
             bottomBar = {
@@ -46,20 +55,29 @@ class HomeScreen : Screen {
                 }
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = {}) {
+                FloatingActionButton(onClick = { navigator.push(PostScreen()) }) {
                     Icon(imageVector = Icons.Filled.Edit, contentDescription = "")
                 }
             }
         ) {
-            Column {
-                Text(text = "Home")
+            Box(
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 val feeds = viewmodel.feed.collectAsState()
-                LazyColumn {
-                    items(feeds.value) { feed ->
-                        Text(text = feed.post.author.displayName)
-                        Text(
-                            text = feed.post.record.jsonObject["text"]?.jsonPrimitive?.content ?: ""
-                        )
+                if (feeds.value.isEmpty()) {
+                    CircularProgressIndicator()
+                } else {
+                    LazyColumn {
+                        items(feeds.value) { feed ->
+                            Text(text = feed.post.author.displayName)
+                            Text(
+                                text = feed.post.record.jsonObject["text"]?.jsonPrimitive?.content
+                                    ?: ""
+                            )
+                        }
                     }
                 }
             }
