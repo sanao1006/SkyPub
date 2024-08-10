@@ -1,6 +1,7 @@
 package app.skypub.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import app.skypub.post.PostScreen
 import cafe.adriel.voyager.core.screen.Screen
@@ -55,7 +57,7 @@ class HomeScreen : Screen {
                 }
             }
         ) {
-            Column {
+            Column(modifier = Modifier.padding(it)) {
                 Text(text = "Home")
                 val feeds = viewmodel.feed.collectAsState()
                 LazyColumn {
