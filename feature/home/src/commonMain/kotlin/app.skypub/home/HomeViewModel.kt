@@ -34,7 +34,7 @@ class HomeViewModel(
         }
     }
 
-    fun getProfile() {
+    private fun getProfile() {
         viewModelScope.launch {
             when (val result = homeRepository.getProfile()) {
                 is Either.Right -> {
@@ -58,6 +58,7 @@ class HomeViewModel(
 
     init {
         loadFeed()
+        getProfile()
     }
 }
 
