@@ -74,7 +74,7 @@ class HomeScreen : Screen {
             },
             bottomBar = {
                 NavigationBar {
-                    NavigationBarMenu.entries.forEachIndexed { index, item ->
+                    BottomNavigationBarMenu.entries.forEachIndexed { index, item ->
                         NavigationBarItem(
                             icon = { Icon(imageVector = item.icon, contentDescription = "") },
                             label = { Text(item.label) },
@@ -115,7 +115,7 @@ class HomeScreen : Screen {
     }
 }
 
-enum class NavigationBarMenu(val label: String, val icon: ImageVector) {
+enum class BottomNavigationBarMenu(val label: String, val icon: ImageVector) {
     Home("Home", Icons.Filled.Home),
     Notifications("Notifications", Icons.Filled.Notifications),
 //    Messages("Messages", Icons.AutoMirrored.Filled.Message)
