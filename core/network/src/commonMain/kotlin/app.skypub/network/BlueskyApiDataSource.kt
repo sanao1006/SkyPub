@@ -7,6 +7,7 @@ import app.skypub.network.model.CreateRecordInput
 import app.skypub.network.model.CreateRecordRequestBody
 import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetProfileResponse
 import app.skypub.network.model.GetTimeLineResponse
 import app.skypub.network.model.RequestErrorResponse
 import app.skypub.network.service.BlueskyApi
@@ -116,6 +117,25 @@ class BlueskyApiDataSource(
         return when (request.status) {
             HttpStatusCode.OK -> {
                 request.body<CreateRecordResponse>().right()
+            }
+
+            else -> {
+                request.body<RequestErrorResponse>().left()
+            }
+        }
+    }
+
+    override suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse> {
+        val request = client.get(
+            "$BASE_URL/app.bsky.actor.getProfile"
+        ) {
+            contentType(ContentType.Application.Json)
+            val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<GetProfileResponse>().right()
             }
 
             else -> {

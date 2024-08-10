@@ -3,6 +3,7 @@ package app.skypub.network.service
 import app.skypub.network.model.CreateRecordInput
 import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetProfileResponse
 import app.skypub.network.model.GetTimeLineResponse
 import app.skypub.network.model.RequestErrorResponse
 import arrow.core.Either
@@ -29,4 +30,6 @@ interface BlueskyApi {
         validate: Boolean = true,
         input: CreateRecordInput
     ): Either<RequestErrorResponse, CreateRecordResponse>
+
+    suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse>
 }
