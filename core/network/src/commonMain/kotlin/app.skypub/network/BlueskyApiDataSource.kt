@@ -18,6 +18,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -131,6 +132,8 @@ class BlueskyApiDataSource(
         ) {
             contentType(ContentType.Application.Json)
             val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+            val identifier = dataStore.data.first()[stringPreferencesKey("identifier")] ?: ""
+            parameter("actor", identifier)
             header(HttpHeaders.Authorization, "Bearer $accessJwt")
         }
         return when (request.status) {
