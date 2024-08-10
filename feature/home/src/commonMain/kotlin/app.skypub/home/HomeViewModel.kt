@@ -2,7 +2,7 @@ package app.skypub.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.skypub.data.repository.FeedRepository
+import app.skypub.data.repository.HomeRepository
 import app.skypub.network.model.FeedItem
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val feedRepository: FeedRepository
+    private val homeRepository: HomeRepository
 ) : ViewModel() {
     private val _feed = MutableStateFlow(emptyList<FeedItem>())
     val feed: StateFlow<List<FeedItem>>
@@ -21,7 +21,7 @@ class HomeViewModel(
 
     private fun loadFeed() {
         viewModelScope.launch {
-            feedRepository.getTimeLine().catch { e ->
+            homeRepository.getTimeLine().catch { e ->
                 Napier.e(tag = "loadFeedError") { "message: ${e.message}" }
             }.collectLatest {
                 _feed.value = it.feed
