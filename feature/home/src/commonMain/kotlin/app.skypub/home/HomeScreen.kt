@@ -10,17 +10,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,12 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import app.skypub.post.PostScreen
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
@@ -62,6 +61,9 @@ class HomeScreen : Screen {
         val profile = viewmodel.profileUiState.collectAsState().value
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
+        val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
+        val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
         ModalNavigationDrawerWrapper(
             drawerContent = {
                 DrawerContent(
@@ -75,17 +77,12 @@ class HomeScreen : Screen {
             drawerState = drawerState
         ) {
             Scaffold(
+                modifier = Modifier
+                    .nestedScroll(bottomScrollBehavior.nestedScrollConnection)
+                    .nestedScroll(topScrollBehavior.nestedScrollConnection),
                 topBar = {
                     TopAppBar(
-                        modifier = Modifier.drawBehind {
-                            // Draw a line at the bottom of the app bar
-                            drawLine(
-                                color = Color.Gray,
-                                start = Offset(0f, size.height),
-                                end = Offset(size.width, size.height),
-                                strokeWidth = 1.dp.toPx()
-                            )
-                        },
+                        scrollBehavior = topScrollBehavior,
                         title = { Text("Home") },
                         navigationIcon = {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -100,14 +97,19 @@ class HomeScreen : Screen {
                     )
                 },
                 bottomBar = {
-                    NavigationBar {
+                    BottomAppBar(
+                        scrollBehavior = bottomScrollBehavior
+                    ) {
                         BottomNavigationBarMenu.entries.forEachIndexed { index, item ->
                             NavigationBarItem(
-                                icon = { Icon(imageVector = item.icon, contentDescription = "") },
+                                icon = {
+                                    Icon(
+                                        imageVector = item.icon, contentDescription = ""
+                                    )
+                                },
                                 label = { Text(item.label) },
                                 selected = selectedItem == index,
-                                onClick = { selectedItem = index }
-                            )
+                                onClick = { selectedItem = index })
                         }
                     }
                 },
@@ -118,9 +120,7 @@ class HomeScreen : Screen {
                 }
             ) {
                 Box(
-                    modifier = Modifier
-                        .padding(it)
-                        .fillMaxSize(),
+                    modifier = Modifier.padding(it).fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     val feeds = viewmodel.feed.collectAsState()
