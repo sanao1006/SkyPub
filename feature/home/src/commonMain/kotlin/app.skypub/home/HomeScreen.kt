@@ -32,8 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import app.skypub.post.PostScreen
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
@@ -73,6 +77,15 @@ class HomeScreen : Screen {
             Scaffold(
                 topBar = {
                     TopAppBar(
+                        modifier = Modifier.drawBehind {
+                            // Draw a line at the bottom of the app bar
+                            drawLine(
+                                color = Color.Gray,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        },
                         title = { Text("Home") },
                         navigationIcon = {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
