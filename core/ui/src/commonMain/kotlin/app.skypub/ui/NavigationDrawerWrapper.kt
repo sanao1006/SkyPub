@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -98,12 +99,14 @@ fun DrawerContent(
             style = MaterialTheme.typography.headlineSmall
         )
         Text(text = "@${handle}")
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Row {
             Text(text = "Followers: $followersCount")
             Spacer(modifier = Modifier.padding(8.dp))
             Text(text = "Follows: $followsCount")
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider()
     }
 }
 
