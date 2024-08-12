@@ -7,11 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.voyager)
-            implementation(projects.core.data)
-            implementation(projects.feature.post)
-            implementation(projects.core.ui)
-            implementation(projects.feature.notification)
-            api(libs.sketch.compose)
+            api(projects.core.data)
             api(projects.core.network)
         }
     }
