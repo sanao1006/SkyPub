@@ -13,7 +13,7 @@ class AppViewModel(
     private val initializeRepository: InitializeRepository,
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
-    private val _isAlreadyLogin = MutableStateFlow(false)
+    private val _isAlreadyLogin: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val isAlreadyLogin = _isAlreadyLogin.asStateFlow()
 
     init {

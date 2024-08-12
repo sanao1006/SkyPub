@@ -1,5 +1,10 @@
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import app.skypub.feature.auth.AuthScreenNavigation
 import app.skypub.home.HomeScreen
 import app.skypub.ui.theme.AppTheme
@@ -16,10 +21,18 @@ fun App() {
     val isAlreadyLogin = viewmodel.isAlreadyLogin.collectAsState().value
     AppTheme {
         KoinContext {
-            if (isAlreadyLogin) {
-                Navigator(HomeScreen())
-            } else {
-                Navigator(AuthScreenNavigation())
+            when (isAlreadyLogin) {
+                null -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                true -> Navigator(HomeScreen())
+                false -> Navigator(AuthScreenNavigation())
             }
         }
     }
