@@ -24,7 +24,7 @@ class HomeViewModel(
     val profileUiState: StateFlow<ProfileUiState>
         get() = _profileUiState.asStateFlow()
 
-    private fun loadFeed() {
+    fun loadFeed() {
         viewModelScope.launch {
             homeRepository.getTimeLine().catch { e ->
                 Napier.e(tag = "loadFeedError") { "message: ${e.message}" }
@@ -57,7 +57,6 @@ class HomeViewModel(
     }
 
     init {
-        loadFeed()
         getProfile()
     }
 }

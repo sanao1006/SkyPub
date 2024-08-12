@@ -30,8 +30,8 @@ data class Post(
     val repostCount: Int,
     val likeCount: Int,
     val indexedAt: String,
-    val viewer: PostViewer,
-    val labels: List<Label>,
+    val viewer: PostViewer? = null,
+    val labels: List<Label>? = null,
     val threadgate: ThreadGate? = null
 )
 
@@ -42,9 +42,9 @@ data class Author(
     val displayName: String,
     val avatar: String,
     val associated: Associated? = null,
-    val viewer: Viewer,
-    val labels: List<Label>,
-    val createdAt: String
+    val viewer: Viewer? = null,
+    val labels: List<Label>? = null,
+    val createdAt: String? = null
 )
 
 @Serializable
