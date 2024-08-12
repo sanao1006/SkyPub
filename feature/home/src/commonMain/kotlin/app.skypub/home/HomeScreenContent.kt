@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -31,8 +30,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.skypub.network.model.FeedItem
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
@@ -109,13 +108,15 @@ fun PostContentIcons(
     modifier: Modifier = Modifier
 ) {
     Row(
+        verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(0.7f)
     ) {
         ContentIcons.entries.forEach { item ->
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.wrapContentSize()
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Top,
+                modifier = Modifier
             ) {
                 Icon(
                     modifier = Modifier.scale(0.7f).clickable { },
@@ -126,10 +127,12 @@ fun PostContentIcons(
                     if (it == "0") ""
                     else it
                 }
+                Spacer(modifier = Modifier.width(3.dp))
                 Text(
                     text = count,
-                    modifier = Modifier.align(Alignment.Top),
-                    fontSize = 14.sp
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Right
                 )
             }
         }
