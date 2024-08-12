@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import app.skypub.notification.NotificationScreen
 import app.skypub.post.PostScreen
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
@@ -111,7 +112,15 @@ class HomeScreen : Screen {
                                 },
                                 label = { Text(item.label) },
                                 selected = selectedItem == index,
-                                onClick = { selectedItem = index })
+                                onClick = {
+                                    selectedItem = index
+                                    when (item) {
+                                        BottomNavigationBarMenu.Home -> {}
+                                        BottomNavigationBarMenu.Notifications -> navigator.push(
+                                            NotificationScreen()
+                                        )
+                                    }
+                                })
                         }
                     }
                 },

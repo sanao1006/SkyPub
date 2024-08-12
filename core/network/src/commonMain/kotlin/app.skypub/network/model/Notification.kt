@@ -25,4 +25,18 @@ data class Notification(
     val record: JsonElement? = null,
     @SerialName("uri")
     val uri: String
+) {
+    fun toNotificationDomainModel() = NotificationDomainModel(
+        reason = reason,
+        name = author.displayName,
+        isRead = isRead,
+        record = record
+    )
+}
+
+data class NotificationDomainModel(
+    val reason: String,
+    val name: String,
+    val isRead: Boolean,
+    val record: JsonElement? = null,
 )

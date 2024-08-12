@@ -6,8 +6,8 @@ import arrow.core.Either
 
 interface NotificationRepository {
     suspend fun getListNotifications(
-        limit: Int?,
-        priority: Boolean?,
-        cursor: String?,
+        limit: Int? = null,
+        priority: Boolean? = null,
+        cursor: String? = null,
     ): Either<RequestErrorResponse, GetListNotificationsResponse>
 }
