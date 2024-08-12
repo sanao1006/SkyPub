@@ -83,7 +83,10 @@ fun HomeScreenPostItem(
         )
         Spacer(modifier = Modifier.size(8.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = feed.post.author.displayName)
+            Text(
+                text = feed.post.author.displayName,
+                style = MaterialTheme.typography.titleMedium
+            )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "@${feed.post.author.handle}",
