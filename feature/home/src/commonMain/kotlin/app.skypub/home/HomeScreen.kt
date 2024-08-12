@@ -1,10 +1,7 @@
 package app.skypub.home
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -12,7 +9,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -31,7 +27,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,8 +41,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.koin.compose.koinInject
 
 class HomeScreen : Screen {
@@ -63,7 +56,7 @@ class HomeScreen : Screen {
         val scope = rememberCoroutineScope()
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+        val feeds = viewmodel.feed.collectAsState().value
         ModalNavigationDrawerWrapper(
             drawerContent = {
                 DrawerContent(
@@ -119,25 +112,10 @@ class HomeScreen : Screen {
                     }
                 }
             ) {
-                Box(
-                    modifier = Modifier.padding(it).fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val feeds = viewmodel.feed.collectAsState()
-                    if (feeds.value.isEmpty()) {
-                        CircularProgressIndicator()
-                    } else {
-                        LazyColumn {
-                            items(feeds.value) { feed ->
-                                Text(text = feed.post.author.displayName)
-                                Text(
-                                    text = feed.post.record.jsonObject["text"]?.jsonPrimitive?.content
-                                        ?: ""
-                                )
-                            }
-                        }
-                    }
-                }
+                HomeScreenContent(
+                    feeds = feeds,
+                    modifier = Modifier.padding(it).fillMaxSize()
+                )
             }
         }
     }
