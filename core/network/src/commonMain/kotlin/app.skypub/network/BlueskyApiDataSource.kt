@@ -7,6 +7,7 @@ import app.skypub.network.model.CreateRecordInput
 import app.skypub.network.model.CreateRecordRequestBody
 import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetListNotificationsResponse
 import app.skypub.network.model.GetProfileResponse
 import app.skypub.network.model.GetTimeLineResponse
 import app.skypub.network.model.RequestErrorResponse
@@ -139,6 +140,32 @@ class BlueskyApiDataSource(
         return when (request.status) {
             HttpStatusCode.OK -> {
                 request.body<GetProfileResponse>().right()
+            }
+
+            else -> {
+                request.body<RequestErrorResponse>().left()
+            }
+        }
+    }
+
+    override suspend fun getListNotifications(
+        limit: Int?,
+        priority: Boolean?,
+        cursor: String?,
+    ): Either<RequestErrorResponse, GetListNotificationsResponse> {
+        val request = client.get(
+            "$BASE_URL/app.bsky.notification.listNotifications"
+        ) {
+            contentType(ContentType.Application.Json)
+            val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+            limit?.let { parameter("limit", it) }
+            priority?.let { parameter("priority", it) }
+            cursor?.let { parameter("cursor", it) }
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<GetListNotificationsResponse>().right()
             }
 
             else -> {
