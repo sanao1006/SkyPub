@@ -10,9 +10,9 @@ kotlin {
             implementation(projects.core.data)
             implementation(projects.feature.post)
             implementation(projects.core.ui)
-            implementation(projects.feature.notification)
             api(libs.sketch.compose)
             api(projects.core.network)
+            api(projects.feature.navigation)
         }
     }
 }

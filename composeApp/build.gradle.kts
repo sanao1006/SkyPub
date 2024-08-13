@@ -59,6 +59,7 @@ kotlin {
             implementation(projects.feature.post)
             implementation(projects.feature.notification)
             implementation(projects.core.ui)
+            implementation(projects.feature.navigation)
             api(libs.napier)
         }
     }

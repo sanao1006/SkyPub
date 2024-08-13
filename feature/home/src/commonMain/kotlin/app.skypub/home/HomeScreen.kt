@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.DrawerValue
@@ -32,13 +30,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import app.skypub.notification.NotificationScreen
+import app.skypub.navigation.SharedScreen
 import app.skypub.post.PostScreen
+import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -61,6 +60,7 @@ class HomeScreen : Screen {
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val feeds = viewmodel.feed.collectAsState().value
+        val notificationScreen = rememberScreen(SharedScreen.Notification)
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
@@ -117,10 +117,11 @@ class HomeScreen : Screen {
                                     when (item) {
                                         BottomNavigationBarMenu.Home -> {}
                                         BottomNavigationBarMenu.Notifications -> navigator.push(
-                                            NotificationScreen()
+                                            notificationScreen
                                         )
                                     }
-                                })
+                                }
+                            )
                         }
                     }
                 },
@@ -140,10 +141,4 @@ class HomeScreen : Screen {
             }
         }
     }
-}
-
-enum class BottomNavigationBarMenu(val label: String, val icon: ImageVector) {
-    Home("Home", Icons.Filled.Home),
-    Notifications("Notifications", Icons.Filled.Notifications),
-//    Messages("Messages", Icons.AutoMirrored.Filled.Message)
 }
