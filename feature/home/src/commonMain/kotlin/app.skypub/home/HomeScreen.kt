@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import app.skypub.common.ProfileUiState
 import app.skypub.navigation.SharedScreen
 import app.skypub.post.PostScreen
 import app.skypub.ui.BottomNavigationBarMenu
@@ -46,7 +47,7 @@ import com.github.panpf.sketch.request.ComposableImageRequest
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-class HomeScreen : Screen {
+class HomeScreen(private val profileUiState: ProfileUiState) : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -54,24 +55,24 @@ class HomeScreen : Screen {
         val viewmodel: HomeViewModel = koinInject<HomeViewModel>()
         var selectedItem by remember { mutableIntStateOf(0) }
         val navigator = LocalNavigator.currentOrThrow
-        val profile = viewmodel.profileUiState.collectAsState().value
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val feeds = viewmodel.feed.collectAsState().value
-        val notificationScreen = rememberScreen(SharedScreen.Notification)
+        val notificationScreen =
+            rememberScreen(SharedScreen.Notification(profileUiState = profileUiState))
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
         ModalNavigationDrawerWrapper(
             drawerContent = {
                 DrawerContent(
-                    avatar = profile.avatar,
-                    displayName = profile.displayName,
-                    handle = profile.handle,
-                    followersCount = profile.followersCount,
-                    followsCount = profile.followsCount
+                    avatar = profileUiState.avatar,
+                    displayName = profileUiState.displayName,
+                    handle = profileUiState.handle,
+                    followersCount = profileUiState.followersCount,
+                    followsCount = profileUiState.followsCount
                 )
             },
             drawerState = drawerState
@@ -89,7 +90,7 @@ class HomeScreen : Screen {
                                 AsyncImage(
                                     modifier = Modifier.clip(shape = CircleShape).fillMaxSize(0.7f),
                                     contentScale = ContentScale.Crop,
-                                    request = ComposableImageRequest(profile.avatar),
+                                    request = ComposableImageRequest(profileUiState.avatar),
                                     contentDescription = ""
                                 )
                             }

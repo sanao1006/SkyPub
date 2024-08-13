@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import app.skypub.common.ProfileUiState
 import app.skypub.navigation.SharedScreen
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.ScaffoldScreenContent
@@ -32,7 +33,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-class NotificationScreen() : Screen {
+class NotificationScreen(private val profileUiState: ProfileUiState) : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
@@ -40,7 +41,7 @@ class NotificationScreen() : Screen {
         val uiState = viewModel.uiState.collectAsState().value
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val navigator = LocalNavigator.currentOrThrow
-        val homeScreen = rememberScreen(SharedScreen.Home)
+        val homeScreen = rememberScreen(SharedScreen.Home(profileUiState))
         val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         var selectedItem by remember { mutableIntStateOf(1) }

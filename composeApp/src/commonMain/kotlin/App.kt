@@ -22,15 +22,17 @@ fun App() {
     Napier.base(DebugAntilog())
     val viewmodel = koinInject<AppViewModel>()
     val isAlreadyLogin = viewmodel.isAlreadyLogin.collectAsState().value
+    val profileUiState = viewmodel.profileUiState.collectAsState().value
+
     ScreenRegistry {
         register<SharedScreen.Home> {
-            HomeScreen()
+            HomeScreen(profileUiState)
         }
         register<SharedScreen.Notification> {
-            NotificationScreen()
+            NotificationScreen(profileUiState)
         }
     }
-    
+
     AppTheme {
         KoinContext {
             when (isAlreadyLogin) {
@@ -43,7 +45,12 @@ fun App() {
                     }
                 }
 
-                true -> Navigator(HomeScreen())
+                true -> {
+                    if (profileUiState.handle.isNotBlank()) {
+                        Navigator(HomeScreen(profileUiState))
+                    }
+                }
+
                 false -> Navigator(AuthScreenNavigation())
             }
         }

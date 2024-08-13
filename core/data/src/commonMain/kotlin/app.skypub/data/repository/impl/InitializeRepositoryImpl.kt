@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import app.skypub.data.repository.InitializeRepository
 import app.skypub.network.BlueskyApiDataSource
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetProfileResponse
 import app.skypub.network.model.RequestErrorResponse
 import arrow.core.Either
 import io.github.aakira.napier.Napier
@@ -40,5 +41,9 @@ class InitializeRepositoryImpl(
                 Napier.e(tag = "refreshTokenError") { "message: ${response.value.message}" }
             }
         }
+    }
+
+    override suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse> {
+        return blueskyApiDataSource.getProfile()
     }
 }
