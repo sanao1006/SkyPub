@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("deploygate")
 }
 
 kotlin {
