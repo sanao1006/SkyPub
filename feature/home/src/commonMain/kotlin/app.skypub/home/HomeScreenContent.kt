@@ -119,7 +119,7 @@ fun PostContentIcons(
                 modifier = Modifier
             ) {
                 Icon(
-                    modifier = Modifier.scale(0.7f).clickable { },
+                    modifier = Modifier.scale(0.8f).clickable { },
                     imageVector = item.icon,
                     contentDescription = ""
                 )

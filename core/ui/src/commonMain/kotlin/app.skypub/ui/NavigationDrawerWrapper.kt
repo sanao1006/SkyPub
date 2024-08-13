@@ -32,20 +32,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import app.skypub.common.ScreenType
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
 import kotlinx.coroutines.launch
 
 @Composable
 fun ModalNavigationDrawerWrapper(
+    screenType: ScreenType,
     drawerState: DrawerState,
     drawerContent: @Composable () -> Unit = {},
+    onMenuItemClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     gesturesEnabled: Boolean = true,
     scrimColor: Color = DrawerDefaults.scrimColor,
     content: @Composable () -> Unit
 ) {
-    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
+    var selectedItemIndex by rememberSaveable { mutableStateOf(screenType.index) }
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerContent = {
@@ -59,9 +62,12 @@ fun ModalNavigationDrawerWrapper(
                         label = { Text(item.label) },
                         onClick = {
                             selectedItemIndex = index
-                            scope.launch { drawerState.close() }
+                            scope.launch {
+                                drawerState.close()
+                                onMenuItemClick(selectedItemIndex)
+                            }
                         },
-                        selected = index == selectedItemIndex,
+                        selected = index == screenType.index,
                         icon = { Icon(imageVector = item.imageVector, contentDescription = "") }
                     )
                 }

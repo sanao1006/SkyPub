@@ -30,7 +30,13 @@ class AuthScreenNavigation : Screen {
                 )
             Spacer(modifier = Modifier.height(24.dp))
             TextButton(
-                onClick = { navigator.push(LoginScreen(platform = Platform.Bluesky)) }
+                onClick = {
+                    navigator.push(
+                        LoginScreen(
+                            platform = Platform.Bluesky
+                        )
+                    )
+                }
             ) {
                 Text(
                     text = Platform.Bluesky.name,

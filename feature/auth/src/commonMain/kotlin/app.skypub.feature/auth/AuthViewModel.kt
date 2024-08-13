@@ -6,7 +6,10 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.skypub.common.ProfileUiState
+import app.skypub.common.ScreenType
 import app.skypub.data.repository.AuthRepository
+import app.skypub.data.repository.InitializeRepository
 import app.skypub.home.HomeScreen
 import app.skypub.network.model.CreateSessionResponse
 import app.skypub.network.model.RequestErrorResponse
@@ -20,10 +23,14 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val authRepository: AuthRepository,
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val initializeRepository: InitializeRepository
 ) : ViewModel() {
     private var _isLoginSuccess: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val isLoginSuccess: StateFlow<Boolean?> = _isLoginSuccess.asStateFlow()
+
+    private val _profileUiState = MutableStateFlow(ProfileUiState("", "", "", 0, 0))
+    val profileUiState = _profileUiState.asStateFlow()
 
     private suspend fun createSession(
         identifier: String,
@@ -50,8 +57,31 @@ class AuthViewModel(
                         it[identifierKey] = identifier
                     }
                     _isLoginSuccess.value = true
+                    fetchProfile()
                     navigator.popUntilRoot()
-                    navigator.replace(HomeScreen())
+                    navigator.replace(HomeScreen(profileUiState.value, ScreenType.HOME))
+                }
+            }
+        }
+    }
+
+    private fun fetchProfile() {
+        viewModelScope.launch {
+            when (val result = initializeRepository.getProfile()) {
+                is Either.Right -> {
+                    _profileUiState.value = ProfileUiState(
+                        avatar = result.value.avatar,
+                        handle = result.value.handle,
+                        displayName = result.value.displayName,
+                        followsCount = result.value.followsCount,
+                        followersCount = result.value.followersCount
+                    )
+                }
+
+                is Either.Left -> {
+                    Napier.e(tag = "getProfileError") {
+                        "message: ${result.value.message}"
+                    }
                 }
             }
         }

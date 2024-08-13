@@ -9,6 +9,9 @@ kotlin {
             implementation(libs.voyager)
             api(projects.core.data)
             api(projects.core.network)
+            api(projects.core.ui)
+            api(projects.feature.navigation)
+            api(projects.core.common)
         }
     }
 }
