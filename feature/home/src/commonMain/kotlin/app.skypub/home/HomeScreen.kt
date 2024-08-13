@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import app.skypub.common.ProfileUiState
+import app.skypub.common.ScreenType
 import app.skypub.navigation.SharedScreen
 import app.skypub.post.PostScreen
 import app.skypub.ui.BottomNavigationBarMenu
@@ -47,7 +48,10 @@ import com.github.panpf.sketch.request.ComposableImageRequest
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-class HomeScreen(private val profileUiState: ProfileUiState) : Screen {
+class HomeScreen(
+    private val profileUiState: ProfileUiState,
+    private val screenType: ScreenType
+) : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -61,11 +65,25 @@ class HomeScreen(private val profileUiState: ProfileUiState) : Screen {
         val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val feeds = viewmodel.feed.collectAsState().value
         val notificationScreen =
-            rememberScreen(SharedScreen.Notification(profileUiState = profileUiState))
+            rememberScreen(
+                SharedScreen.Notification(
+                    profileUiState = profileUiState,
+                    screenType = ScreenType.NOTIFICATION
+                )
+            )
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
         ModalNavigationDrawerWrapper(
+            screenType = screenType,
+            onMenuItemClick = { index ->
+                when (index) {
+                    0 -> {}
+                    1 -> {
+                        navigator.push(notificationScreen)
+                    }
+                }
+            },
             drawerContent = {
                 DrawerContent(
                     avatar = profileUiState.avatar,

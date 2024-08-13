@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import app.skypub.common.ScreenType
 import app.skypub.feature.auth.AuthScreenNavigation
 import app.skypub.home.HomeScreen
 import app.skypub.navigation.SharedScreen
@@ -26,10 +27,10 @@ fun App() {
 
     ScreenRegistry {
         register<SharedScreen.Home> {
-            HomeScreen(profileUiState)
+            HomeScreen(profileUiState, ScreenType.HOME)
         }
         register<SharedScreen.Notification> {
-            NotificationScreen(profileUiState)
+            NotificationScreen(profileUiState, ScreenType.NOTIFICATION)
         }
     }
 
@@ -47,7 +48,7 @@ fun App() {
 
                 true -> {
                     if (profileUiState.handle.isNotBlank()) {
-                        Navigator(HomeScreen(profileUiState))
+                        Navigator(HomeScreen(profileUiState, ScreenType.HOME))
                     }
                 }
 

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.skypub.common.ProfileUiState
+import app.skypub.common.ScreenType
 import app.skypub.data.repository.AuthRepository
 import app.skypub.data.repository.InitializeRepository
 import app.skypub.home.HomeScreen
@@ -58,7 +59,7 @@ class AuthViewModel(
                     _isLoginSuccess.value = true
                     fetchProfile()
                     navigator.popUntilRoot()
-                    navigator.replace(HomeScreen(profileUiState.value))
+                    navigator.replace(HomeScreen(profileUiState.value, ScreenType.HOME))
                 }
             }
         }

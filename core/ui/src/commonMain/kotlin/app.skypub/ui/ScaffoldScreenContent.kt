@@ -44,8 +44,3 @@ fun <T> ScaffoldScreenContent(
         }
     }
 }
-
-enum class ScreenType {
-    HOME,
-    NOTIFICATION
-}

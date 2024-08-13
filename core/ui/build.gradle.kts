@@ -7,6 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(libs.sketch.compose)
+            api(projects.core.common)
         }
     }
 }
