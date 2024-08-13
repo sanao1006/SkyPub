@@ -52,10 +52,11 @@ class NotificationScreen(
         val uiState = viewModel.uiState.collectAsState().value
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val navigator = LocalNavigator.currentOrThrow
-        val homeScreen = rememberScreen(SharedScreen.Home(profileUiState, ScreenType.HOME))
+        var selectedItem by remember { mutableIntStateOf(ScreenType.NOTIFICATION.index) }
+        val homeScreen =
+            rememberScreen(SharedScreen.Home(profileUiState, ScreenType.getType(selectedItem)))
         val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
-        var selectedItem by remember { mutableIntStateOf(1) }
         val scope = rememberCoroutineScope()
         ModalNavigationDrawerWrapper(
             screenType = screenType,

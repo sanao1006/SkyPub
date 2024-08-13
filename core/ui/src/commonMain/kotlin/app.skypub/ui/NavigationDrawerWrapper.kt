@@ -67,7 +67,7 @@ fun ModalNavigationDrawerWrapper(
                                 onMenuItemClick(selectedItemIndex)
                             }
                         },
-                        selected = index == selectedItemIndex,
+                        selected = index == screenType.index,
                         icon = { Icon(imageVector = item.imageVector, contentDescription = "") }
                     )
                 }

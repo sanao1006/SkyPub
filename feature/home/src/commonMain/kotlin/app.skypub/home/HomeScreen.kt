@@ -57,7 +57,7 @@ class HomeScreen(
     @Composable
     override fun Content() {
         val viewmodel: HomeViewModel = koinInject<HomeViewModel>()
-        var selectedItem by remember { mutableIntStateOf(0) }
+        var selectedItem by remember { mutableIntStateOf(ScreenType.HOME.index) }
         val navigator = LocalNavigator.currentOrThrow
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
@@ -68,7 +68,7 @@ class HomeScreen(
             rememberScreen(
                 SharedScreen.Notification(
                     profileUiState = profileUiState,
-                    screenType = ScreenType.NOTIFICATION
+                    screenType = ScreenType.getType(selectedItem)
                 )
             )
         LaunchedEffect(feeds) {
