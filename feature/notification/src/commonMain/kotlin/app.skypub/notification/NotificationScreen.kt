@@ -1,7 +1,17 @@
 package app.skypub.notification
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Reply
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.DrawerValue
@@ -25,9 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
 import app.skypub.navigation.SharedScreen
+import app.skypub.network.model.NotificationDomainModel
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
@@ -38,7 +51,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.koin.compose.koinInject
 
 class NotificationScreen(
@@ -126,12 +142,66 @@ class NotificationScreen(
                 }
             ) {
                 ScaffoldScreenContent(
+                    modifier = Modifier.padding(it),
                     items = uiState.notifications,
                     content = { it ->
-                        Text(text = it.name)
+                        NotificationItem(
+                            notification = it,
+                            modifier = Modifier.padding(top = 12.dp)
+                        )
                     }
                 )
             }
         }
+    }
+}
+
+@Composable
+fun NotificationItem(
+    notification: NotificationDomainModel,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier) {
+        NotificationIcon(reason = notification.reason)
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+            AsyncImage(
+                modifier = Modifier.size(40.dp).clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                request = ComposableImageRequest(notification.avatar),
+                contentDescription = ""
+            )
+            Text(
+                text = notification.name,
+                style = MaterialTheme.typography.titleSmall
+            )
+            Napier.d(tag = "ray") { "record ${notification.name} ${notification.record.toString()}" }
+            Text(
+                text = notification.record?.jsonObject?.get("text")?.jsonPrimitive?.content ?: "",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = 12.sp
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun NotificationIcon(
+    reason: String,
+    modifier: Modifier = Modifier
+) {
+    val imageVector = when (reason) {
+        "like" -> Icons.Outlined.Favorite
+        "reply" -> Icons.AutoMirrored.Outlined.Reply
+        "repost" -> Icons.Outlined.Repeat
+        else -> null
+    }
+    imageVector?.let {
+        Icon(
+            modifier = modifier.padding(top = 3.dp),
+            imageVector = it,
+            contentDescription = ""
+        )
     }
 }

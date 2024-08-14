@@ -30,6 +30,7 @@ data class Notification(
         reason = reason,
         name = author.displayName,
         isRead = isRead,
+        avatar = author.avatar,
         record = record
     )
 }
@@ -38,5 +39,6 @@ data class NotificationDomainModel(
     val reason: String,
     val name: String,
     val isRead: Boolean,
+    val avatar: String? = null,
     val record: JsonElement? = null,
 )
