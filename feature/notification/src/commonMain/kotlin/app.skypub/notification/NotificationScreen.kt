@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,8 +53,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.koin.compose.koinInject
@@ -177,14 +180,22 @@ fun NotificationItem(
             )
             Text(
                 text = notification.name,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
-            Napier.d(tag = "ray") { "record ${notification.name} ${notification.record.toString()}" }
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = notification.record?.jsonObject?.get("text")?.jsonPrimitive?.content ?: "",
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    fontSize = 12.sp
+                    lineHeight = 16.sp
                 )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            val localDate = Instant.parse(notification.createdAt)
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+            Text(
+                // TODO FIXME: This is not the correct format
+                text = "${localDate.year}/${localDate.monthNumber}/${localDate.dayOfMonth}",
+                style = MaterialTheme.typography.labelMedium
             )
         }
     }
