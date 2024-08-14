@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Reply
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
@@ -40,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.skypub.common.ProfileUiState
+import app.skypub.common.ReasonEnum
 import app.skypub.common.ScreenType
 import app.skypub.navigation.SharedScreen
 import app.skypub.network.model.NotificationDomainModel
@@ -169,7 +171,7 @@ fun NotificationItem(
     modifier: Modifier = Modifier
 ) {
     Row(modifier) {
-        NotificationIcon(reason = notification.reason)
+        NotificationIcon(reason = ReasonEnum.getType(notification.reason))
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             AsyncImage(
@@ -178,8 +180,18 @@ fun NotificationItem(
                 request = ComposableImageRequest(notification.avatar),
                 contentDescription = ""
             )
+            val text = when (ReasonEnum.getType(notification.reason)) {
+                ReasonEnum.LIKE -> "liked your post"
+                ReasonEnum.REPLY -> "replied to your post"
+                ReasonEnum.MENTION -> "mentioned you in a post"
+                ReasonEnum.REPOST -> "reposted your post"
+                ReasonEnum.QUOTE -> "quoted your post"
+                ReasonEnum.FOLLOW -> "followed you"
+                ReasonEnum.STARTERPACK_JOINED -> "joined the starter pack"
+                ReasonEnum.UNKNOWN -> ""
+            }
             Text(
-                text = notification.name,
+                text = "${notification.name}: $text",
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -203,14 +215,15 @@ fun NotificationItem(
 
 @Composable
 fun NotificationIcon(
-    reason: String,
+    reason: ReasonEnum,
     modifier: Modifier = Modifier
 ) {
     val imageVector = when (reason) {
-        "like" -> Icons.Outlined.Favorite
-        "reply" -> Icons.AutoMirrored.Outlined.Reply
-        "repost" -> Icons.Outlined.Repeat
-        else -> null
+        ReasonEnum.LIKE -> Icons.Outlined.Favorite
+        ReasonEnum.REPLY, ReasonEnum.MENTION -> Icons.AutoMirrored.Outlined.Reply
+        ReasonEnum.REPOST, ReasonEnum.QUOTE -> Icons.Outlined.Repeat
+        ReasonEnum.FOLLOW -> Icons.Outlined.PersonAdd
+        ReasonEnum.STARTERPACK_JOINED, ReasonEnum.UNKNOWN -> null
     }
     imageVector?.let {
         Icon(
