@@ -86,7 +86,6 @@ fun HomeScreenPostItem(
                 text = feed.post.author.displayName,
                 style = MaterialTheme.typography.titleMedium
             )
-            Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "@${feed.post.author.handle}",
                 style = MaterialTheme.typography.titleSmall

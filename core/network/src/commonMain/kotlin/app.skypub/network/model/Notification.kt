@@ -4,6 +4,8 @@ package app.skypub.network.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 @Serializable
 data class Notification(
@@ -30,6 +32,8 @@ data class Notification(
         reason = reason,
         name = author.displayName,
         isRead = isRead,
+        createdAt = record?.jsonObject?.get("createdAt")?.jsonPrimitive?.content ?: "",
+        avatar = author.avatar,
         record = record
     )
 }
@@ -38,5 +42,8 @@ data class NotificationDomainModel(
     val reason: String,
     val name: String,
     val isRead: Boolean,
+    val createdAt: String,
+    val avatar: String? = null,
+    val post: String? = null,
     val record: JsonElement? = null,
 )
