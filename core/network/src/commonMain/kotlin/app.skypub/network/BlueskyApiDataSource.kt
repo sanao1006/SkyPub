@@ -7,6 +7,7 @@ import app.skypub.network.model.CreateRecordInput
 import app.skypub.network.model.CreateRecordRequestBody
 import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetAuthorFeedResponse
 import app.skypub.network.model.GetListNotificationsResponse
 import app.skypub.network.model.GetProfileResponse
 import app.skypub.network.model.GetTimeLineResponse
@@ -174,7 +175,7 @@ class BlueskyApiDataSource(
         }
     }
 
-    override suspend fun getAuthorFeed(handle: String): Either<RequestErrorResponse, GetTimeLineResponse> {
+    override suspend fun getAuthorFeed(handle: String): Either<RequestErrorResponse, GetAuthorFeedResponse> {
         val request = client.get(
             "$BASE_URL/app.bsky.feed.getAuthorFeed"
         ) {
@@ -185,7 +186,7 @@ class BlueskyApiDataSource(
         }
         return when (request.status) {
             HttpStatusCode.OK -> {
-                request.body<GetTimeLineResponse>().right()
+                request.body<GetAuthorFeedResponse>().right()
             }
 
             else -> {

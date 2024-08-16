@@ -7,6 +7,8 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.voyager)
             implementation(projects.feature.navigation)
+            implementation(projects.core.data)
+            implementation(projects.core.network)
         }
     }
 }
