@@ -62,6 +62,7 @@ kotlin {
             implementation(projects.core.ui)
             implementation(projects.feature.navigation)
             implementation(projects.core.common)
+            implementation(projects.feature.user)
             api(libs.napier)
         }
     }

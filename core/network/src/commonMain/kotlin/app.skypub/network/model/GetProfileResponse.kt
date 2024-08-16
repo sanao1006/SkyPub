@@ -52,7 +52,7 @@ data class Follower(
     val handle: String,
     val displayName: String,
     val avatar: String,
-    val associated: Associated,
+    val associated: Associated? = null,
     val labels: List<Label>,
     val createdAt: String
 )

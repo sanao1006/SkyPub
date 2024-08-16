@@ -32,7 +32,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.skypub.navigation.UserScreen
 import app.skypub.network.model.FeedItem
+import cafe.adriel.voyager.core.registry.rememberScreen
+import cafe.adriel.voyager.navigator.Navigator
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
 import kotlinx.serialization.json.jsonObject
@@ -41,6 +44,7 @@ import kotlinx.serialization.json.jsonPrimitive
 @Composable
 fun HomeScreenContent(
     feeds: List<FeedItem>,
+    navigator: Navigator,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -59,6 +63,7 @@ fun HomeScreenContent(
                         HorizontalDivider()
                     }
                     HomeScreenPostItem(
+                        navigator = navigator,
                         feed = feed,
                         modifier = Modifier
                             .padding(top = 12.dp)
@@ -71,11 +76,17 @@ fun HomeScreenContent(
 
 @Composable
 fun HomeScreenPostItem(
-    feed: FeedItem, modifier: Modifier = Modifier
+    navigator: Navigator,
+    feed: FeedItem,
+    modifier: Modifier = Modifier
 ) {
+    val userDetailScreen = rememberScreen(
+        UserScreen.UserDetail(feed.post.author.handle)
+    )
     Row(modifier = modifier) {
         AsyncImage(
-            modifier = Modifier.size(40.dp).clip(CircleShape),
+            modifier = Modifier.size(40.dp).clip(CircleShape)
+                .clickable(onClick = { navigator.push(userDetailScreen) }),
             contentScale = ContentScale.Crop,
             request = ComposableImageRequest(feed.post.author.avatar),
             contentDescription = ""

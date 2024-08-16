@@ -19,6 +19,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
@@ -67,7 +68,8 @@ class AuthViewModel(
 
     private fun fetchProfile() {
         viewModelScope.launch {
-            when (val result = initializeRepository.getProfile()) {
+            val identifier = dataStore.data.first()[stringPreferencesKey("identifier")] ?: ""
+            when (val result = initializeRepository.getProfile(identifier)) {
                 is Either.Right -> {
                     _profileUiState.value = ProfileUiState(
                         avatar = result.value.avatar,

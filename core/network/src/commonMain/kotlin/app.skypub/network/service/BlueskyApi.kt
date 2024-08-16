@@ -3,6 +3,7 @@ package app.skypub.network.service
 import app.skypub.network.model.CreateRecordInput
 import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetAuthorFeedResponse
 import app.skypub.network.model.GetListNotificationsResponse
 import app.skypub.network.model.GetProfileResponse
 import app.skypub.network.model.GetTimeLineResponse
@@ -32,11 +33,17 @@ interface BlueskyApi {
         input: CreateRecordInput
     ): Either<RequestErrorResponse, CreateRecordResponse>
 
-    suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse>
+    suspend fun getProfile(identifier: String): Either<RequestErrorResponse, GetProfileResponse>
 
     suspend fun getListNotifications(
         limit: Int?,
         priority: Boolean?,
         cursor: String?,
     ): Either<RequestErrorResponse, GetListNotificationsResponse>
+
+    suspend fun getAuthorFeed(
+        handle: String,
+//        limit: Int?,
+//        cursor: String?,
+    ): Either<RequestErrorResponse, GetAuthorFeedResponse>
 }

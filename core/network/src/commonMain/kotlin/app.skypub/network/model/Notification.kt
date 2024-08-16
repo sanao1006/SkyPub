@@ -33,6 +33,7 @@ data class Notification(
         name = author.displayName,
         isRead = isRead,
         createdAt = record?.jsonObject?.get("createdAt")?.jsonPrimitive?.content ?: "",
+        handle = author.handle,
         avatar = author.avatar,
         record = record
     )
@@ -43,6 +44,7 @@ data class NotificationDomainModel(
     val name: String,
     val isRead: Boolean,
     val createdAt: String,
+    val handle: String,
     val avatar: String? = null,
     val post: String? = null,
     val record: JsonElement? = null,

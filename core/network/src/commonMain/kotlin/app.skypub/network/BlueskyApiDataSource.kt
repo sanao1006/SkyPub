@@ -7,6 +7,7 @@ import app.skypub.network.model.CreateRecordInput
 import app.skypub.network.model.CreateRecordRequestBody
 import app.skypub.network.model.CreateRecordResponse
 import app.skypub.network.model.CreateSessionResponse
+import app.skypub.network.model.GetAuthorFeedResponse
 import app.skypub.network.model.GetListNotificationsResponse
 import app.skypub.network.model.GetProfileResponse
 import app.skypub.network.model.GetTimeLineResponse
@@ -127,13 +128,12 @@ class BlueskyApiDataSource(
         }
     }
 
-    override suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse> {
+    override suspend fun getProfile(identifier: String): Either<RequestErrorResponse, GetProfileResponse> {
         val request = client.get(
             "$BASE_URL/app.bsky.actor.getProfile"
         ) {
             contentType(ContentType.Application.Json)
             val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
-            val identifier = dataStore.data.first()[stringPreferencesKey("identifier")] ?: ""
             parameter("actor", identifier)
             header(HttpHeaders.Authorization, "Bearer $accessJwt")
         }
@@ -166,6 +166,26 @@ class BlueskyApiDataSource(
         return when (request.status) {
             HttpStatusCode.OK -> {
                 request.body<GetListNotificationsResponse>().right()
+            }
+
+            else -> {
+                request.body<RequestErrorResponse>().left()
+            }
+        }
+    }
+
+    override suspend fun getAuthorFeed(handle: String): Either<RequestErrorResponse, GetAuthorFeedResponse> {
+        val request = client.get(
+            "$BASE_URL/app.bsky.feed.getAuthorFeed"
+        ) {
+            contentType(ContentType.Application.Json)
+            val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+            parameter("actor", handle)
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<GetAuthorFeedResponse>().right()
             }
 
             else -> {

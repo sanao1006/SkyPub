@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
 import app.skypub.navigation.SharedScreen
+import app.skypub.navigation.UserScreen
 import app.skypub.post.PostScreen
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
@@ -71,6 +72,11 @@ class HomeScreen(
                     screenType = ScreenType.getType(selectedItem)
                 )
             )
+        val myProfileScreen = rememberScreen(
+            UserScreen.UserDetail(
+                handle = profileUiState.handle
+            )
+        )
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
@@ -90,7 +96,13 @@ class HomeScreen(
                     displayName = profileUiState.displayName,
                     handle = profileUiState.handle,
                     followersCount = profileUiState.followersCount,
-                    followsCount = profileUiState.followsCount
+                    followsCount = profileUiState.followsCount,
+                    onAvatarClick = {
+                        scope.launch {
+                            drawerState.close()
+                            navigator.push(myProfileScreen)
+                        }
+                    }
                 )
             },
             drawerState = drawerState
@@ -152,6 +164,7 @@ class HomeScreen(
             ) {
                 HomeScreenContent(
                     feeds = feeds,
+                    navigator = navigator,
                     modifier = Modifier
                         .padding(it)
                         .background(color = MaterialTheme.colorScheme.surfaceContainerLowest)

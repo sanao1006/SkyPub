@@ -9,8 +9,10 @@ import app.skypub.common.ScreenType
 import app.skypub.feature.auth.AuthScreenNavigation
 import app.skypub.home.HomeScreen
 import app.skypub.navigation.SharedScreen
+import app.skypub.navigation.UserScreen
 import app.skypub.notification.NotificationScreen
 import app.skypub.ui.theme.AppTheme
+import app.skypub.user.UserDetailScreen
 import cafe.adriel.voyager.core.registry.ScreenRegistry
 import cafe.adriel.voyager.navigator.Navigator
 import io.github.aakira.napier.DebugAntilog
@@ -31,6 +33,9 @@ fun App() {
         }
         register<SharedScreen.Notification> {
             NotificationScreen(profileUiState, ScreenType.NOTIFICATION)
+        }
+        register<UserScreen.UserDetail> {
+            UserDetailScreen(it.handle)
         }
     }
 
