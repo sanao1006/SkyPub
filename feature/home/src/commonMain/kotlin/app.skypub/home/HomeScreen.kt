@@ -90,7 +90,8 @@ class HomeScreen(
                     displayName = profileUiState.displayName,
                     handle = profileUiState.handle,
                     followersCount = profileUiState.followersCount,
-                    followsCount = profileUiState.followsCount
+                    followsCount = profileUiState.followsCount,
+                    onAvatarClick = { navigator.push(UserDetailScreen()) }
                 )
             },
             drawerState = drawerState

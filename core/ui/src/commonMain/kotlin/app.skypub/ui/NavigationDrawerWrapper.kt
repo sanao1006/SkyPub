@@ -89,9 +89,10 @@ fun DrawerContent(
     followersCount: Int,
     followsCount: Int,
     modifier: Modifier = Modifier,
+    onAvatarClick: () -> Unit = {}
 ) {
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
-        IconButton(onClick = {}) {
+        IconButton(onClick = onAvatarClick) {
             AsyncImage(
                 modifier = Modifier.clip(shape = CircleShape).fillMaxSize(1.2f),
                 contentScale = ContentScale.Crop,
