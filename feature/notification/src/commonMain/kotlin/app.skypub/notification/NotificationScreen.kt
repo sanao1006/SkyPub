@@ -67,8 +67,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.koin.compose.koinInject
 
 class NotificationScreen(
-    private val profileUiState: ProfileUiState,
-    private val screenType: ScreenType
+    private val profileUiState: ProfileUiState, private val screenType: ScreenType
 ) : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -83,78 +82,71 @@ class NotificationScreen(
         val topScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         val scope = rememberCoroutineScope()
-        ModalNavigationDrawerWrapper(
-            screenType = screenType,
-            onMenuItemClick = { index ->
-                when (index) {
-                    0 -> navigator.push(homeScreen)
-                    1 -> {}
-                }
-            },
-            drawerContent = {
-                DrawerContent(
-                    avatar = profileUiState.avatar,
-                    displayName = profileUiState.displayName,
-                    handle = profileUiState.handle,
-                    followersCount = profileUiState.followersCount,
-                    followsCount = profileUiState.followsCount
-                )
-            },
-            drawerState = drawerState
+        val myProfileScreen = rememberScreen(UserScreen.UserDetail(profileUiState.handle))
+        ModalNavigationDrawerWrapper(screenType = screenType, onMenuItemClick = { index ->
+            when (index) {
+                0 -> navigator.push(homeScreen)
+                1 -> {}
+            }
+        }, drawerContent = {
+            DrawerContent(avatar = profileUiState.avatar,
+                displayName = profileUiState.displayName,
+                handle = profileUiState.handle,
+                followersCount = profileUiState.followersCount,
+                followsCount = profileUiState.followsCount,
+                onAvatarClick = {
+                    scope.launch {
+                        drawerState.close()
+                        navigator.push(myProfileScreen)
+                    }
+                })
+        }, drawerState = drawerState
         ) {
-            Scaffold(
-                modifier = Modifier
-                    .nestedScroll(bottomScrollBehavior.nestedScrollConnection)
-                    .nestedScroll(topScrollBehavior.nestedScrollConnection),
-                topBar = {
-                    TopAppBar(
-                        scrollBehavior = topScrollBehavior,
-                        title = { Text("Notification") },
-                        navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                AsyncImage(
-                                    modifier = Modifier.clip(shape = CircleShape).fillMaxSize(0.7f),
-                                    contentScale = ContentScale.Crop,
-                                    request = ComposableImageRequest(profileUiState.avatar),
-                                    contentDescription = ""
-                                )
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
-                        )
-                    )
-                },
-                bottomBar = {
-                    BottomAppBar(
-                        scrollBehavior = bottomScrollBehavior
-                    ) {
-                        BottomNavigationBarMenu.entries.forEachIndexed { index, item ->
-                            NavigationBarItem(
-                                icon = {
-                                    Icon(
-                                        imageVector = item.icon, contentDescription = ""
-                                    )
-                                },
-                                label = { Text(item.label) },
-                                selected = selectedItem == index,
-                                onClick = {
-                                    selectedItem = index
-                                    when (item) {
-                                        BottomNavigationBarMenu.Home -> {
-                                            navigator.push(homeScreen)
-                                        }
-
-                                        BottomNavigationBarMenu.Notifications -> {}
-                                    }
-                                }
+            Scaffold(modifier = Modifier.nestedScroll(bottomScrollBehavior.nestedScrollConnection)
+                .nestedScroll(topScrollBehavior.nestedScrollConnection), topBar = {
+                TopAppBar(
+                    scrollBehavior = topScrollBehavior,
+                    title = { Text("Notification") },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            AsyncImage(
+                                modifier = Modifier.clip(shape = CircleShape).fillMaxSize(0.7f),
+                                contentScale = ContentScale.Crop,
+                                request = ComposableImageRequest(profileUiState.avatar),
+                                contentDescription = ""
                             )
                         }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                    )
+                )
+            }, bottomBar = {
+                BottomAppBar(
+                    scrollBehavior = bottomScrollBehavior
+                ) {
+                    BottomNavigationBarMenu.entries.forEachIndexed { index, item ->
+                        NavigationBarItem(icon = {
+                            Icon(
+                                imageVector = item.icon, contentDescription = ""
+                            )
+                        },
+                            label = { Text(item.label) },
+                            selected = selectedItem == index,
+                            onClick = {
+                                selectedItem = index
+                                when (item) {
+                                    BottomNavigationBarMenu.Home -> {
+                                        navigator.push(homeScreen)
+                                    }
+
+                                    BottomNavigationBarMenu.Notifications -> {}
+                                }
+                            })
                     }
                 }
-            ) {
-                ScaffoldScreenContent(
-                    modifier = Modifier.padding(it),
+            }) {
+                ScaffoldScreenContent(modifier = Modifier.padding(it),
                     items = uiState.notifications,
                     content = { it ->
                         NotificationItem(
@@ -162,8 +154,7 @@ class NotificationScreen(
                             navigator = navigator,
                             modifier = Modifier.padding(top = 12.dp)
                         )
-                    }
-                )
+                    })
             }
         }
     }
@@ -171,9 +162,7 @@ class NotificationScreen(
 
 @Composable
 fun NotificationItem(
-    notification: NotificationDomainModel,
-    navigator: Navigator,
-    modifier: Modifier = Modifier
+    notification: NotificationDomainModel, navigator: Navigator, modifier: Modifier = Modifier
 ) {
     val userDetailScreen = rememberScreen(UserScreen.UserDetail(notification.handle))
     Row(modifier) {
@@ -198,8 +187,7 @@ fun NotificationItem(
                 ReasonEnum.UNKNOWN -> ""
             }
             Text(
-                text = "${notification.name}: $text",
-                style = MaterialTheme.typography.titleMedium
+                text = "${notification.name}: $text", style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -222,8 +210,7 @@ fun NotificationItem(
 
 @Composable
 fun NotificationIcon(
-    reason: ReasonEnum,
-    modifier: Modifier = Modifier
+    reason: ReasonEnum, modifier: Modifier = Modifier
 ) {
     val imageVector = when (reason) {
         ReasonEnum.LIKE -> Icons.Outlined.Favorite
@@ -234,9 +221,7 @@ fun NotificationIcon(
     }
     imageVector?.let {
         Icon(
-            modifier = modifier.padding(top = 3.dp),
-            imageVector = it,
-            contentDescription = ""
+            modifier = modifier.padding(top = 3.dp), imageVector = it, contentDescription = ""
         )
     }
 }

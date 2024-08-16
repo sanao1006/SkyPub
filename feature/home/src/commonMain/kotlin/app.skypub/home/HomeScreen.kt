@@ -97,7 +97,12 @@ class HomeScreen(
                     handle = profileUiState.handle,
                     followersCount = profileUiState.followersCount,
                     followsCount = profileUiState.followsCount,
-                    onAvatarClick = { navigator.push(userDetailScreen) }
+                    onAvatarClick = {
+                        scope.launch {
+                            drawerState.close()
+                            navigator.push(userDetailScreen)
+                        }
+                    }
                 )
             },
             drawerState = drawerState
