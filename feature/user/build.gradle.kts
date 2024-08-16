@@ -9,6 +9,7 @@ kotlin {
             implementation(projects.feature.navigation)
             implementation(projects.core.data)
             implementation(projects.core.network)
+            implementation(projects.core.ui)
         }
     }
 }

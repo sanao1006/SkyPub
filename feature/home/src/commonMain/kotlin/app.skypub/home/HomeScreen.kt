@@ -72,7 +72,7 @@ class HomeScreen(
                     screenType = ScreenType.getType(selectedItem)
                 )
             )
-        val userDetailScreen = rememberScreen(
+        val myProfileScreen = rememberScreen(
             UserScreen.UserDetail(
                 handle = profileUiState.handle
             )
@@ -100,7 +100,7 @@ class HomeScreen(
                     onAvatarClick = {
                         scope.launch {
                             drawerState.close()
-                            navigator.push(userDetailScreen)
+                            navigator.push(myProfileScreen)
                         }
                     }
                 )
@@ -164,7 +164,7 @@ class HomeScreen(
             ) {
                 HomeScreenContent(
                     feeds = feeds,
-                    onIconClick = { navigator.push(userDetailScreen) },
+                    navigator = navigator,
                     modifier = Modifier
                         .padding(it)
                         .background(color = MaterialTheme.colorScheme.surfaceContainerLowest)

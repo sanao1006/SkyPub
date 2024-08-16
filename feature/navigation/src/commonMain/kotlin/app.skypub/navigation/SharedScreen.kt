@@ -20,9 +20,7 @@ sealed class SharedScreen : ScreenProvider {
 }
 
 sealed class UserScreen : ScreenProvider {
-    abstract val handle: String
-
     data class UserDetail(
-        override val handle: String
+        val handle: String
     ) : UserScreen()
 }
