@@ -39,4 +39,10 @@ interface BlueskyApi {
         priority: Boolean?,
         cursor: String?,
     ): Either<RequestErrorResponse, GetListNotificationsResponse>
+
+    suspend fun getAuthorFeed(
+        handle: String,
+//        limit: Int?,
+//        cursor: String?,
+    ): Either<RequestErrorResponse, GetTimeLineResponse>
 }

@@ -174,6 +174,26 @@ class BlueskyApiDataSource(
         }
     }
 
+    override suspend fun getAuthorFeed(handle: String): Either<RequestErrorResponse, GetTimeLineResponse> {
+        val request = client.get(
+            "$BASE_URL/app.bsky.feed.getAuthorFeed"
+        ) {
+            contentType(ContentType.Application.Json)
+            val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
+            parameter("handle", handle)
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                request.body<GetTimeLineResponse>().right()
+            }
+
+            else -> {
+                request.body<RequestErrorResponse>().left()
+            }
+        }
+    }
+
     companion object {
         val BASE_URL = "https://bsky.social/xrpc"
     }
