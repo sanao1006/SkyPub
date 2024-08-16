@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import app.skypub.data.repository.UserRepository
 
 class UserDetailScreenViewModel(
-    private val userDetailScreenRepository: UserRepository
-) : ViewModel() {
+    private val userDetailScreenRepository: UserRepository,
+
+    ) : ViewModel() {
 }

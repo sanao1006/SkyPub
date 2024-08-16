@@ -128,13 +128,12 @@ class BlueskyApiDataSource(
         }
     }
 
-    override suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse> {
+    override suspend fun getProfile(identifier: String): Either<RequestErrorResponse, GetProfileResponse> {
         val request = client.get(
             "$BASE_URL/app.bsky.actor.getProfile"
         ) {
             contentType(ContentType.Application.Json)
             val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
-            val identifier = dataStore.data.first()[stringPreferencesKey("identifier")] ?: ""
             parameter("actor", identifier)
             header(HttpHeaders.Authorization, "Bearer $accessJwt")
         }

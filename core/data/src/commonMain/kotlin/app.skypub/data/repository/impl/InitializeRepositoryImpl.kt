@@ -43,7 +43,7 @@ class InitializeRepositoryImpl(
         }
     }
 
-    override suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse> {
-        return blueskyApiDataSource.getProfile()
+    override suspend fun getProfile(identifier: String): Either<RequestErrorResponse, GetProfileResponse> {
+        return blueskyApiDataSource.getProfile(identifier)
     }
 }

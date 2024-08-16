@@ -8,5 +8,5 @@ import arrow.core.Either
 interface InitializeRepository {
     suspend fun refreshToken(): Either<RequestErrorResponse, CreateSessionResponse>
     suspend fun initializeToken()
-    suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse>
+    suspend fun getProfile(identifier: String): Either<RequestErrorResponse, GetProfileResponse>
 }

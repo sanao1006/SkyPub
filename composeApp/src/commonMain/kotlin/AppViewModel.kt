@@ -40,7 +40,8 @@ class AppViewModel(
 
     private fun fetchProfile() {
         viewModelScope.launch {
-            when (val result = initializeRepository.getProfile()) {
+            val identifier = dataStore.data.first()[stringPreferencesKey("identifier")] ?: ""
+            when (val result = initializeRepository.getProfile(identifier)) {
                 is Either.Right -> {
                     _profileUiState.value = ProfileUiState(
                         avatar = result.value.avatar,

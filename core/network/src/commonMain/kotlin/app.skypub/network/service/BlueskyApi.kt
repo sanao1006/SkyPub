@@ -33,7 +33,7 @@ interface BlueskyApi {
         input: CreateRecordInput
     ): Either<RequestErrorResponse, CreateRecordResponse>
 
-    suspend fun getProfile(): Either<RequestErrorResponse, GetProfileResponse>
+    suspend fun getProfile(identifier: String): Either<RequestErrorResponse, GetProfileResponse>
 
     suspend fun getListNotifications(
         limit: Int?,
