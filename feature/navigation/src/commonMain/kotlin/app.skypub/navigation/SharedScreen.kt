@@ -18,3 +18,11 @@ sealed class SharedScreen : ScreenProvider {
         override val screenType: ScreenType
     ) : SharedScreen()
 }
+
+sealed class UserScreen : ScreenProvider {
+    abstract val handle: String
+
+    data class UserDetail(
+        override val handle: String
+    ) : UserScreen()
+}

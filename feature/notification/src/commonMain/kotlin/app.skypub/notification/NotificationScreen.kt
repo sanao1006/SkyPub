@@ -1,5 +1,6 @@
 package app.skypub.notification
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +45,7 @@ import app.skypub.common.ProfileUiState
 import app.skypub.common.ReasonEnum
 import app.skypub.common.ScreenType
 import app.skypub.navigation.SharedScreen
+import app.skypub.navigation.UserScreen
 import app.skypub.network.model.NotificationDomainModel
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
@@ -52,6 +54,7 @@ import app.skypub.ui.ScaffoldScreenContent
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
@@ -156,6 +159,7 @@ class NotificationScreen(
                     content = { it ->
                         NotificationItem(
                             notification = it,
+                            navigator = navigator,
                             modifier = Modifier.padding(top = 12.dp)
                         )
                     }
@@ -168,14 +172,17 @@ class NotificationScreen(
 @Composable
 fun NotificationItem(
     notification: NotificationDomainModel,
+    navigator: Navigator,
     modifier: Modifier = Modifier
 ) {
+    val userDetailScreen = rememberScreen(UserScreen.UserDetail(notification.handle))
     Row(modifier) {
         NotificationIcon(reason = ReasonEnum.getType(notification.reason))
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             AsyncImage(
-                modifier = Modifier.size(40.dp).clip(CircleShape),
+                modifier = Modifier.size(40.dp).clip(CircleShape)
+                    .clickable(onClick = { navigator.push(userDetailScreen) }),
                 contentScale = ContentScale.Crop,
                 request = ComposableImageRequest(notification.avatar),
                 contentDescription = ""

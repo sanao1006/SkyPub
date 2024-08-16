@@ -41,6 +41,7 @@ import kotlinx.serialization.json.jsonPrimitive
 @Composable
 fun HomeScreenContent(
     feeds: List<FeedItem>,
+    onIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -61,7 +62,8 @@ fun HomeScreenContent(
                     HomeScreenPostItem(
                         feed = feed,
                         modifier = Modifier
-                            .padding(top = 12.dp)
+                            .padding(top = 12.dp),
+                        onIconClick = onIconClick
                     )
                 }
             }
@@ -71,11 +73,12 @@ fun HomeScreenContent(
 
 @Composable
 fun HomeScreenPostItem(
-    feed: FeedItem, modifier: Modifier = Modifier
+    feed: FeedItem, modifier: Modifier = Modifier,
+    onIconClick: () -> Unit = {}
 ) {
     Row(modifier = modifier) {
         AsyncImage(
-            modifier = Modifier.size(40.dp).clip(CircleShape),
+            modifier = Modifier.size(40.dp).clip(CircleShape).clickable(onClick = onIconClick),
             contentScale = ContentScale.Crop,
             request = ComposableImageRequest(feed.post.author.avatar),
             contentDescription = ""
