@@ -180,7 +180,7 @@ class BlueskyApiDataSource(
         ) {
             contentType(ContentType.Application.Json)
             val accessJwt = dataStore.data.first()[stringPreferencesKey("access_jwt")] ?: ""
-            parameter("handle", handle)
+            parameter("actor", handle)
             header(HttpHeaders.Authorization, "Bearer $accessJwt")
         }
         return when (request.status) {
