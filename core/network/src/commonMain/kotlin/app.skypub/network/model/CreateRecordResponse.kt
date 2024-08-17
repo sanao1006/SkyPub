@@ -22,5 +22,11 @@ data class CreateRecordInput(
     val createdAt: String,
     val text: String? = null,
     val langs: List<String>? = null,
-    val uri: String? = null,
+    val subject: Subject? = null,
+)
+
+@Serializable
+data class Subject(
+    val uri: String,
+    val cid: String
 )

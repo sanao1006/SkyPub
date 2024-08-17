@@ -168,7 +168,13 @@ class HomeScreen(
                     modifier = Modifier
                         .padding(it)
                         .background(color = MaterialTheme.colorScheme.surfaceContainerLowest)
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    onIconClick = { icon, identifier, uri, cid ->
+                        when (icon) {
+                            ContentIcons.FavoriteBorder -> viewmodel.like(identifier, uri, cid)
+                            else -> {}
+                        }
+                    }
                 )
             }
         }

@@ -45,7 +45,8 @@ import kotlinx.serialization.json.jsonPrimitive
 fun HomeScreenContent(
     feeds: List<FeedItem>,
     navigator: Navigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onIconClick: (ContentIcons, String, String, String) -> Unit
 ) {
     Box(
         modifier = modifier,
@@ -66,7 +67,8 @@ fun HomeScreenContent(
                         navigator = navigator,
                         feed = feed,
                         modifier = Modifier
-                            .padding(top = 12.dp)
+                            .padding(top = 12.dp),
+                        onIconClick = onIconClick
                     )
                 }
             }
@@ -78,7 +80,8 @@ fun HomeScreenContent(
 fun HomeScreenPostItem(
     navigator: Navigator,
     feed: FeedItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onIconClick: (ContentIcons, String, String, String) -> Unit
 ) {
     val userDetailScreen = rememberScreen(
         UserScreen.UserDetail(feed.post.author.handle)
@@ -107,7 +110,10 @@ fun HomeScreenPostItem(
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(6.dp))
-            PostContentIcons(feed = feed)
+            PostContentIcons(
+                feed = feed,
+                onIconClick = onIconClick
+            )
         }
     }
 }
@@ -115,6 +121,7 @@ fun HomeScreenPostItem(
 @Composable
 fun PostContentIcons(
     feed: FeedItem,
+    onIconClick: (ContentIcons, String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -129,7 +136,15 @@ fun PostContentIcons(
                 modifier = Modifier
             ) {
                 Icon(
-                    modifier = Modifier.scale(0.8f).clickable { },
+                    modifier = Modifier.scale(0.8f)
+                        .clickable {
+                            onIconClick(
+                                item,
+                                feed.post.author.did,
+                                feed.post.uri,
+                                feed.post.cid
+                            )
+                        },
                     imageVector = item.icon,
                     contentDescription = ""
                 )
