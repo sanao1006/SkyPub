@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubbleOutline
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.sharp.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -45,7 +47,8 @@ import kotlinx.serialization.json.jsonPrimitive
 fun HomeScreenContent(
     feeds: List<FeedItem>,
     navigator: Navigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onIconClick: (ContentIcons, String, String, String) -> Unit
 ) {
     Box(
         modifier = modifier,
@@ -66,7 +69,8 @@ fun HomeScreenContent(
                         navigator = navigator,
                         feed = feed,
                         modifier = Modifier
-                            .padding(top = 12.dp)
+                            .padding(top = 12.dp),
+                        onIconClick = onIconClick
                     )
                 }
             }
@@ -78,7 +82,8 @@ fun HomeScreenContent(
 fun HomeScreenPostItem(
     navigator: Navigator,
     feed: FeedItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onIconClick: (ContentIcons, String, String, String) -> Unit
 ) {
     val userDetailScreen = rememberScreen(
         UserScreen.UserDetail(feed.post.author.handle)
@@ -107,7 +112,10 @@ fun HomeScreenPostItem(
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(6.dp))
-            PostContentIcons(feed = feed)
+            PostContentIcons(
+                feed = feed,
+                onIconClick = onIconClick
+            )
         }
     }
 }
@@ -115,6 +123,7 @@ fun HomeScreenPostItem(
 @Composable
 fun PostContentIcons(
     feed: FeedItem,
+    onIconClick: (ContentIcons, String, String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -129,8 +138,16 @@ fun PostContentIcons(
                 modifier = Modifier
             ) {
                 Icon(
-                    modifier = Modifier.scale(0.8f).clickable { },
-                    imageVector = item.icon,
+                    modifier = Modifier.scale(0.8f)
+                        .clickable {
+                            onIconClick(
+                                item,
+                                feed.post.author.did,
+                                feed.post.uri,
+                                feed.post.cid
+                            )
+                        },
+                    painter = rememberVectorPainter(item.getIconState(feed.post.viewer?.like)),
                     contentDescription = ""
                 )
                 var count: String = item.getIconCount(feed, item).let {
@@ -149,11 +166,18 @@ fun PostContentIcons(
     }
 }
 
-enum class ContentIcons(val icon: ImageVector) {
-    ChatBubbleOutline(Icons.Default.ChatBubbleOutline),
-    Repeat(Icons.Default.Repeat),
-    FavoriteBorder(Icons.Sharp.FavoriteBorder)
+enum class ContentIcons(val icon: ImageVector, val filledIcon: ImageVector?) {
+    ChatBubbleOutline(Icons.Default.ChatBubbleOutline, null),
+    Repeat(Icons.Default.Repeat, Icons.Filled.Repeat),
+    FavoriteBorder(Icons.Sharp.FavoriteBorder, Icons.Filled.Favorite)
     ;
+
+    fun getIconState(like: String?): ImageVector {
+        return when (this) {
+            FavoriteBorder -> if (like.isNullOrBlank()) icon else filledIcon ?: icon
+            else -> icon
+        }
+    }
 
     fun getIconCount(feed: FeedItem, contentIcons: ContentIcons): String {
         return when (contentIcons) {
