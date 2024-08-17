@@ -19,7 +19,8 @@ data class CreateRecordRequestBody(
 
 @Serializable
 data class CreateRecordInput(
-    val text: String,
     val createdAt: String,
+    val text: String? = null,
     val langs: List<String>? = null,
+    val uri: String? = null,
 )

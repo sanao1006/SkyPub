@@ -1,12 +1,14 @@
 package app.skypub.data.repository.di
 
 import app.skypub.data.repository.AuthRepository
+import app.skypub.data.repository.GraphRepository
 import app.skypub.data.repository.HomeRepository
 import app.skypub.data.repository.InitializeRepository
 import app.skypub.data.repository.NotificationRepository
 import app.skypub.data.repository.PostRepository
 import app.skypub.data.repository.UserRepository
 import app.skypub.data.repository.impl.AuthRepositoryImpl
+import app.skypub.data.repository.impl.GraphRepositoryImpl
 import app.skypub.data.repository.impl.HomeRepositoryImpl
 import app.skypub.data.repository.impl.InitializeRepositoryImpl
 import app.skypub.data.repository.impl.NotificationRepositoryImpl
@@ -23,4 +25,5 @@ val dataModule = module {
     singleOf(::PostRepositoryImpl).bind<PostRepository>()
     singleOf(::NotificationRepositoryImpl).bind<NotificationRepository>()
     singleOf(::UserRepositoryImpl).bind<UserRepository>()
+    singleOf(::GraphRepositoryImpl).bind<GraphRepository>()
 }
