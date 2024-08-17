@@ -34,6 +34,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
+import app.skypub.composables.ContentIcons
 import app.skypub.navigation.SharedScreen
 import app.skypub.navigation.UserScreen
 import app.skypub.post.PostScreen
