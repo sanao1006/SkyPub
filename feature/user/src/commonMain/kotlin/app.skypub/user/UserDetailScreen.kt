@@ -12,19 +12,23 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import app.skypub.composables.TimeLinePostItem
 import app.skypub.ui.ScaffoldScreenContent
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class UserDetailScreen(private val handle: String) : Screen {
@@ -32,10 +36,13 @@ class UserDetailScreen(private val handle: String) : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewmodel = koinInject<UserDetailScreenViewModel>()
+        val snackbarHostState = remember { SnackbarHostState() }
+        val scope = rememberCoroutineScope()
         LaunchedEffect(Unit) {
             viewmodel.getUiState(handle)
         }
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 Row(modifier = Modifier.background(color = Color.Transparent)) {
                     IconButton(onClick = { navigator.pop() }) {
@@ -56,17 +63,21 @@ class UserDetailScreen(private val handle: String) : Screen {
                     }
 
                     is UserDetailScreenState.Error -> {
-                        Text("error")
-                        Text(state.message)
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Loading failed")
+                        }
                     }
 
                     is UserDetailScreenState.UserDetailScreenUiState -> {
                         ScaffoldScreenContent(
                             items = state.feeds,
                             modifier = Modifier.padding(it)
-                        ) {
-                            Text(
-                                it.post.record.jsonObject["text"]?.jsonPrimitive?.content ?: "aa"
+                        ) { feed ->
+                            TimeLinePostItem(
+                                navigator = navigator,
+                                feed = feed,
+                                modifier = Modifier.padding(top = 8.dp, bottom = 2.dp),
+                                onIconClick = { _, _, _, _ -> }
                             )
                         }
                     }
