@@ -46,7 +46,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 
@@ -87,7 +86,8 @@ data class LoginScreen(val platform: Platform) : Screen {
                             viewModel.login(
                                 identifier,
                                 password,
-                                navigator
+                                navigator,
+                                hostState
                             )
                         }
                     )
@@ -163,11 +163,6 @@ fun BlueSkyLoginScreen(
         modifier = Modifier.fillMaxWidth().wrapContentHeight()
     ) {
         Text("Login")
-    }
-    if (isLoginSuccess != null && !isLoginSuccess) {
-        scope.launch {
-            hostState.showSnackbar("Login failed. The identifier or password is wrong.")
-        }
     }
 }
 

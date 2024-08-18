@@ -1,5 +1,6 @@
 package app.skypub.feature.auth
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -40,12 +41,18 @@ class AuthViewModel(
         return authRepository.createSession(identifier, password)
     }
 
-    fun login(identifier: String, password: String, navigator: Navigator) {
+    fun login(
+        identifier: String,
+        password: String,
+        navigator: Navigator,
+        snackbarHostState: SnackbarHostState
+    ) {
         viewModelScope.launch {
             when (val response = createSession(identifier, password)) {
                 is Either.Left -> {
                     _isLoginSuccess.value = false
                     Napier.e(tag = "createSessionError") { "message: ${response.value.message}" }
+                    snackbarHostState.showSnackbar("Login failed!")
                 }
 
                 is Either.Right -> {
