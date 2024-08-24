@@ -1,19 +1,20 @@
 package app.skypub.user
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import app.skypub.composables.TimeLinePostItem
 import app.skypub.ui.ScaffoldScreenContent
@@ -32,27 +33,35 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 class UserDetailScreen(private val handle: String) : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewmodel = koinInject<UserDetailScreenViewModel>()
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
+        val state = viewmodel.uiState.collectAsState().value
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         LaunchedEffect(Unit) {
             viewmodel.getUiState(handle)
         }
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
-                Row(modifier = Modifier.background(color = Color.Transparent)) {
-                    IconButton(onClick = { navigator.pop() }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, "")
+                TopAppBar(
+                    title = {},
+                    scrollBehavior = scrollBehavior,
+                    navigationIcon = {
+                        IconButton(onClick = { navigator.pop() }) {
+                            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, "")
+                        }
                     }
-                }
+                )
             }
         ) {
             Column(modifier = Modifier.padding(it)) {
-                when (val state = viewmodel.uiState.collectAsState().value) {
+                when (state) {
                     is UserDetailScreenState.Loading -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -71,7 +80,6 @@ class UserDetailScreen(private val handle: String) : Screen {
                     is UserDetailScreenState.UserDetailScreenUiState -> {
                         ScaffoldScreenContent(
                             items = state.feeds,
-                            modifier = Modifier.padding(it)
                         ) { feed ->
                             TimeLinePostItem(
                                 navigator = navigator,
