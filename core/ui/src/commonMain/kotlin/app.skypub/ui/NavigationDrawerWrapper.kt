@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
@@ -42,7 +44,7 @@ fun ModalNavigationDrawerWrapper(
     screenType: ScreenType,
     drawerState: DrawerState,
     drawerContent: @Composable () -> Unit = {},
-    onMenuItemClick: (Int) -> Unit = {},
+    onMenuItemClick: (NavigationDrawerMainMenu) -> Unit = {},
     modifier: Modifier = Modifier,
     gesturesEnabled: Boolean = true,
     scrimColor: Color = DrawerDefaults.scrimColor,
@@ -56,7 +58,7 @@ fun ModalNavigationDrawerWrapper(
                 Spacer(modifier = Modifier.height(24.dp))
                 drawerContent()
                 Spacer(modifier = Modifier.height(24.dp))
-                NavigationDrawerMenu.entries.forEachIndexed { index, item ->
+                NavigationDrawerMainMenu.entries.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         label = { Text(item.label) },
@@ -64,11 +66,41 @@ fun ModalNavigationDrawerWrapper(
                             selectedItemIndex = index
                             scope.launch {
                                 drawerState.close()
-                                onMenuItemClick(selectedItemIndex)
+                                onMenuItemClick(item)
                             }
                         },
                         selected = index == screenType.index,
                         icon = { Icon(imageVector = item.imageVector, contentDescription = "") }
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(8.dp))
+                AccountMenu.entries.forEachIndexed { index, accountMenu ->
+                    NavigationDrawerItem(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        label = { Text(accountMenu.label) },
+                        onClick = {
+                            scope.launch {
+                                when (accountMenu) {
+                                    AccountMenu.SETTINGS -> {
+
+                                    }
+
+                                    AccountMenu.LOGOUT -> {
+
+                                    }
+                                }
+                                drawerState.close()
+                            }
+                        },
+                        selected = false,
+                        icon = {
+                            Icon(
+                                imageVector = accountMenu.imageVector,
+                                contentDescription = ""
+                            )
+                        }
                     )
                 }
             }
@@ -117,7 +149,19 @@ fun DrawerContent(
     }
 }
 
-private enum class NavigationDrawerMenu(val imageVector: ImageVector, val label: String) {
-    HOME(Icons.Default.Home, "Home"),
-    NOTIFICATIONS(Icons.Default.Notifications, "Notifications"),
+sealed interface NavMenu
+
+enum class NavigationDrawerMainMenu(
+    val index: Int,
+    val imageVector: ImageVector,
+    val label: String
+) :
+    NavMenu {
+    HOME(0, Icons.Default.Home, "Home"),
+    NOTIFICATIONS(1, Icons.Default.Notifications, "Notifications"),
+}
+
+enum class AccountMenu(val index: Int, val imageVector: ImageVector, val label: String) : NavMenu {
+    SETTINGS(0, Icons.Default.Settings, "Settings"),
+    LOGOUT(1, Icons.AutoMirrored.Filled.Logout, "Logout"),
 }

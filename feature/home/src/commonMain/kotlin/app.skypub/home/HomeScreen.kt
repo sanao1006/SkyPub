@@ -41,6 +41,7 @@ import app.skypub.post.PostScreen
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
+import app.skypub.ui.NavigationDrawerMainMenu
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -83,12 +84,12 @@ class HomeScreen(
         }
         ModalNavigationDrawerWrapper(
             screenType = screenType,
-            onMenuItemClick = { index ->
-                when (index) {
-                    0 -> {}
-                    1 -> {
-                        navigator.push(notificationScreen)
-                    }
+            onMenuItemClick = { item ->
+                when (item) {
+                    NavigationDrawerMainMenu.HOME -> {}
+                    NavigationDrawerMainMenu.NOTIFICATIONS -> navigator.push(
+                        notificationScreen
+                    )
                 }
             },
             drawerContent = {

@@ -50,6 +50,7 @@ import app.skypub.network.model.NotificationDomainModel
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
+import app.skypub.ui.NavigationDrawerMainMenu
 import app.skypub.ui.ScaffoldScreenContent
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
@@ -83,10 +84,13 @@ class NotificationScreen(
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         val scope = rememberCoroutineScope()
         val myProfileScreen = rememberScreen(UserScreen.UserDetail(profileUiState.handle))
-        ModalNavigationDrawerWrapper(screenType = screenType, onMenuItemClick = { index ->
-            when (index) {
-                0 -> navigator.push(homeScreen)
-                1 -> {}
+        ModalNavigationDrawerWrapper(screenType = screenType, onMenuItemClick = { item ->
+            when (item) {
+                NavigationDrawerMainMenu.HOME -> {
+                    navigator.push(homeScreen)
+                }
+
+                NavigationDrawerMainMenu.NOTIFICATIONS -> {}
             }
         }, drawerContent = {
             DrawerContent(avatar = profileUiState.avatar,

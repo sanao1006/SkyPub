@@ -15,6 +15,7 @@ kotlin {
             api(projects.feature.navigation)
             api(projects.core.common)
             api(projects.feature.composables)
+            api(projects.core.ui)
         }
     }
 }
