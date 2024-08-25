@@ -8,7 +8,7 @@ A lightweight Bluesky Android client built by Compose Multiplatform.
 
 - Minimum SDK level 26
 - Compose Multiplatform
-- [MultiModule](https://developer.android.com/topic/modularization?hl=ja) 対応
+- Support [MultiModule](https://developer.android.com/topic/modularization)
 - Jetpack
     - Compose
     - ViewModel
@@ -28,7 +28,7 @@ A lightweight Bluesky Android client built by Compose Multiplatform.
 ## Architecture
 
 The app architecture is based on
-Google's [App Architecture Guide](https://developer.android.com/topic/architecture).
+[Google's App Architecture Guide](https://developer.android.com/topic/architecture).
 It consists of three major modules: app, core, and feature.
 
 ## Roadmap
