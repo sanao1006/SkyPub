@@ -6,7 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import app.skypub.common.ScreenType
-import app.skypub.feature.auth.AuthScreenNavigation
+import app.skypub.feature.auth.LoginScreen
+import app.skypub.feature.auth.Platform
 import app.skypub.home.HomeScreen
 import app.skypub.navigation.SharedScreen
 import app.skypub.navigation.UserScreen
@@ -57,7 +58,9 @@ fun App() {
                     }
                 }
 
-                false -> Navigator(AuthScreenNavigation())
+                false -> Navigator(
+                    LoginScreen(platform = Platform.Bluesky)
+                )
             }
         }
     }
