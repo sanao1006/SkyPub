@@ -52,6 +52,17 @@ fun ModalNavigationDrawerWrapper(
 ) {
     var selectedItemIndex by rememberSaveable { mutableStateOf(screenType.index) }
     val scope = rememberCoroutineScope()
+    var isDialogShow by rememberSaveable { mutableStateOf(false) }
+    if (isDialogShow) {
+        LogOutConfirmDialog(
+            onConfirm = {
+                isDialogShow = false
+            },
+            onDismissRequest = {
+                isDialogShow = false
+            }
+        )
+    }
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(modifier = modifier) {
@@ -88,7 +99,7 @@ fun ModalNavigationDrawerWrapper(
                                     }
 
                                     AccountMenu.LOGOUT -> {
-
+                                        isDialogShow = true
                                     }
                                 }
                                 drawerState.close()
