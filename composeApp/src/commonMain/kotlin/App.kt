@@ -30,10 +30,10 @@ fun App() {
 
     ScreenRegistry {
         register<SharedScreen.Home> {
-            HomeScreen(profileUiState, ScreenType.HOME)
+            HomeScreen(it.profileUiState, ScreenType.HOME)
         }
         register<SharedScreen.Notification> {
-            NotificationScreen(profileUiState, ScreenType.NOTIFICATION)
+            NotificationScreen(it.profileUiState, ScreenType.NOTIFICATION)
         }
         register<UserScreen.UserDetail> {
             UserDetailScreen(it.handle)
