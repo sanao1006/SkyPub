@@ -163,16 +163,15 @@ fun DrawerContent(
 sealed interface NavMenu
 
 enum class NavigationDrawerMainMenu(
-    val index: Int,
     val imageVector: ImageVector,
     val label: String
 ) :
     NavMenu {
-    HOME(0, Icons.Default.Home, "Home"),
-    NOTIFICATIONS(1, Icons.Default.Notifications, "Notifications"),
+    HOME(Icons.Default.Home, "Home"),
+    NOTIFICATIONS(Icons.Default.Notifications, "Notifications"),
 }
 
-enum class AccountMenu(val index: Int, val imageVector: ImageVector, val label: String) : NavMenu {
-    SETTINGS(0, Icons.Default.Settings, "Settings"),
-    LOGOUT(1, Icons.AutoMirrored.Filled.Logout, "Logout"),
+enum class AccountMenu(val imageVector: ImageVector, val label: String) : NavMenu {
+    SETTINGS(Icons.Default.Settings, "Settings"),
+    LOGOUT(Icons.AutoMirrored.Filled.Logout, "Logout"),
 }

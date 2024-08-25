@@ -152,9 +152,9 @@ class NotificationScreen(
             }) {
                 ScaffoldScreenContent(modifier = Modifier.padding(it),
                     items = uiState.notifications,
-                    content = { it ->
+                    content = { notificationDomainModel ->
                         NotificationItem(
-                            notification = it,
+                            notification = notificationDomainModel,
                             navigator = navigator,
                             modifier = Modifier.padding(top = 12.dp)
                         )
