@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -61,15 +59,7 @@ data class LoginScreen(val platform: Platform) : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Login ${platform.value}") },
-                    navigationIcon = {
-                        IconButton(onClick = navigator::pop) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = ""
-                            )
-                        }
-                    }
+                    title = { Text("SkyPub") }
                 )
             },
             snackbarHost = { SnackbarHost(hostState = hostState) }
@@ -98,7 +88,7 @@ data class LoginScreen(val platform: Platform) : Screen {
                             )
                         }
                     )
-
+                    // TODO someday implement Misskey
                     Platform.Misskey -> MisskeyLoginScreen()
                 }
             }
@@ -113,7 +103,7 @@ fun BlueSkyLoginScreen(
     var userName by rememberSaveable { mutableStateOf("") }
     var passWord by rememberSaveable { mutableStateOf("") }
     Column(horizontalAlignment = Alignment.Start) {
-        Text("account", modifier = Modifier.align(Alignment.Start))
+        Text("Login Bluesky", modifier = Modifier.align(Alignment.Start))
         Spacer(modifier = Modifier.height(4.dp))
         val focusManager = LocalFocusManager.current
         TextField(
@@ -139,7 +129,7 @@ fun BlueSkyLoginScreen(
             ),
             placeholder = { Text("email or user name") }
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         TextField(
             modifier = Modifier.onPreviewKeyEvent {
                 if (it.key == Key.Tab) {
