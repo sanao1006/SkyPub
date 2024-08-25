@@ -38,6 +38,9 @@ fun App() {
         register<UserScreen.UserDetail> {
             UserDetailScreen(it.handle)
         }
+        register<app.skypub.ui.LoginScreen.Login> {
+            LoginScreen(platform = Platform.Bluesky)
+        }
     }
 
     AppTheme {

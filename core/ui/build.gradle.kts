@@ -8,6 +8,9 @@ kotlin {
         commonMain.dependencies {
             api(libs.sketch.compose)
             api(projects.core.common)
+            api(projects.core.data)
+            api(projects.core.datastore)
+            implementation(libs.voyager)
         }
     }
 }

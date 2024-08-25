@@ -17,4 +17,8 @@ class UserRepositoryImpl(
     override suspend fun getProfile(identifier: String): Either<RequestErrorResponse, GetProfileResponse> {
         return blueskyApiDataSource.getProfile(identifier)
     }
+
+    override suspend fun deleteSession(): Either<RequestErrorResponse, Unit> {
+        return blueskyApiDataSource.deleteSession()
+    }
 }

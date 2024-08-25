@@ -194,6 +194,25 @@ class BlueskyApiDataSource(
         }
     }
 
+    override suspend fun deleteSession(): Either<RequestErrorResponse, Unit> {
+        val request = client.post(
+            "$BASE_URL/com.atproto.server.deleteSession"
+        ) {
+            contentType(ContentType.Application.Json)
+            val accessJwt = dataStore.data.first()[stringPreferencesKey("refresh_jwt")] ?: ""
+            header(HttpHeaders.Authorization, "Bearer $accessJwt")
+        }
+        return when (request.status) {
+            HttpStatusCode.OK -> {
+                Unit.right()
+            }
+
+            else -> {
+                request.body<RequestErrorResponse>().left()
+            }
+        }
+    }
+
     companion object {
         val BASE_URL = "https://bsky.social/xrpc"
     }

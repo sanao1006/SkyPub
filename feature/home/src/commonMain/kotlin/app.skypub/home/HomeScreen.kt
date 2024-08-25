@@ -16,6 +16,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -79,10 +81,13 @@ class HomeScreen(
                 handle = profileUiState.handle
             )
         )
+        val hostState = remember { SnackbarHostState() }
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
         ModalNavigationDrawerWrapper(
+            snackbarHostState = hostState,
+            navigator = navigator,
             screenType = screenType,
             onMenuItemClick = { item ->
                 when (item) {
@@ -110,6 +115,7 @@ class HomeScreen(
             drawerState = drawerState
         ) {
             Scaffold(
+                snackbarHost = { SnackbarHost(hostState = hostState) },
                 modifier = Modifier
                     .nestedScroll(bottomScrollBehavior.nestedScrollConnection)
                     .nestedScroll(topScrollBehavior.nestedScrollConnection),

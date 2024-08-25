@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,10 +35,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import app.skypub.common.ScreenType
+import app.skypub.data.repository.UserRepository
+import arrow.core.Either
+import cafe.adriel.voyager.core.registry.ScreenProvider
+import cafe.adriel.voyager.core.registry.rememberScreen
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ModalNavigationDrawerWrapper(
@@ -48,14 +60,29 @@ fun ModalNavigationDrawerWrapper(
     modifier: Modifier = Modifier,
     gesturesEnabled: Boolean = true,
     scrimColor: Color = DrawerDefaults.scrimColor,
+    snackbarHostState: SnackbarHostState,
+    navigator: cafe.adriel.voyager.navigator.Navigator,
+    viewModel: NavDrawerViewModel = koinViewModel<NavDrawerViewModel>(),
     content: @Composable () -> Unit
 ) {
     var selectedItemIndex by rememberSaveable { mutableStateOf(screenType.index) }
     val scope = rememberCoroutineScope()
     var isDialogShow by rememberSaveable { mutableStateOf(false) }
+    val loginScreen = rememberScreen(LoginScreen.Login)
     if (isDialogShow) {
         LogOutConfirmDialog(
             onConfirm = {
+                scope.launch {
+                    viewModel.logout(
+                        onFailed = {
+                            snackbarHostState.showSnackbar("Logout failed")
+                        },
+                        onSuccess = {
+                            navigator.popUntilRoot()
+                            navigator.replace(loginScreen)
+                        }
+                    )
+                }
                 isDialogShow = false
             },
             onDismissRequest = {
@@ -174,4 +201,35 @@ enum class NavigationDrawerMainMenu(
 enum class AccountMenu(val imageVector: ImageVector, val label: String) : NavMenu {
     SETTINGS(Icons.Default.Settings, "Settings"),
     LOGOUT(Icons.AutoMirrored.Filled.Logout, "Logout"),
+}
+
+class NavDrawerViewModel(
+    private val userRepository: UserRepository,
+    private val dataStore: DataStore<Preferences>
+) : ViewModel() {
+    suspend fun logout(
+        onFailed: suspend () -> Unit,
+        onSuccess: suspend () -> Unit
+    ) {
+        viewModelScope.launch {
+            when (userRepository.deleteSession()) {
+                is Either.Left -> {
+                    onFailed()
+                }
+
+                is Either.Right -> {
+                    dataStore.edit {
+                        it.remove(stringPreferencesKey("access_jwt"))
+                        it.remove(stringPreferencesKey("refresh_jwt"))
+                        it.remove(stringPreferencesKey("identifier"))
+                    }
+                    onSuccess()
+                }
+            }
+        }
+    }
+}
+
+sealed class LoginScreen : ScreenProvider {
+    data object Login : LoginScreen()
 }
