@@ -14,7 +14,6 @@ import app.skypub.network.model.RequestErrorResponse
 import arrow.core.Either
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -24,9 +23,6 @@ class AuthViewModel(
     private val dataStore: DataStore<Preferences>,
     private val initializeRepository: InitializeRepository
 ) : ViewModel() {
-    private var _isLoginSuccess: MutableStateFlow<Boolean?> = MutableStateFlow(null)
-    val isLoginSuccess: StateFlow<Boolean?> = _isLoginSuccess.asStateFlow()
-
     private var _profileUiState = MutableStateFlow(ProfileUiState("", "", "", 0, 0))
     val profileUiState = _profileUiState.asStateFlow()
 
@@ -46,7 +42,6 @@ class AuthViewModel(
         viewModelScope.launch {
             when (val response = createSession(identifier, password)) {
                 is Either.Left -> {
-                    _isLoginSuccess.value = false
                     Napier.e(tag = "createSessionError") { "message: ${response.value.message}" }
                     onFailure()
                 }
@@ -61,7 +56,6 @@ class AuthViewModel(
                         it[identifierKey] = identifier
                     }
                     fetchProfile()
-                    _isLoginSuccess.value = true
                     onSuccess()
                 }
             }

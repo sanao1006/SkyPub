@@ -28,7 +28,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,7 +56,6 @@ data class LoginScreen(val platform: Platform) : Screen {
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
         val viewModel: AuthViewModel = koinInject<AuthViewModel>()
-        val isLoginSuccess = viewModel.isLoginSuccess.collectAsState().value
         val hostState = remember { SnackbarHostState() }
         val profileUiState = viewModel.profileUiState.collectAsState()
         Scaffold(
@@ -83,8 +81,6 @@ data class LoginScreen(val platform: Platform) : Screen {
             ) {
                 when (platform) {
                     Platform.Bluesky -> BlueSkyLoginScreen(
-                        hostState = hostState,
-                        isLoginSuccess = isLoginSuccess,
                         onClick = { identifier, password ->
                             viewModel.login(
                                 identifier,
@@ -112,11 +108,8 @@ data class LoginScreen(val platform: Platform) : Screen {
 
 @Composable
 fun BlueSkyLoginScreen(
-    hostState: SnackbarHostState,
-    isLoginSuccess: Boolean?,
     onClick: (String, String) -> Unit = { identifier, password -> }
 ) {
-    val scope = rememberCoroutineScope()
     var userName by rememberSaveable { mutableStateOf("") }
     var passWord by rememberSaveable { mutableStateOf("") }
     Column(horizontalAlignment = Alignment.Start) {
