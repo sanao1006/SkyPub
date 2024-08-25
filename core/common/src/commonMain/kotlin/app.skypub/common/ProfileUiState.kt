@@ -1,9 +1,9 @@
 package app.skypub.common
 
 data class ProfileUiState(
-    val avatar: String = "",
-    val handle: String = "",
-    val displayName: String = "",
-    val followsCount: Int = 0,
-    val followersCount: Int = 0,
+    var avatar: String = "",
+    var handle: String = "",
+    var displayName: String = "",
+    var followsCount: Int = 0,
+    var followersCount: Int = 0,
 )

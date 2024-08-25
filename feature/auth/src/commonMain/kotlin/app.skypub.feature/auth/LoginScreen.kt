@@ -42,6 +42,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import app.skypub.common.ScreenType
+import app.skypub.home.HomeScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
@@ -57,6 +59,7 @@ data class LoginScreen(val platform: Platform) : Screen {
         val viewModel: AuthViewModel = koinInject<AuthViewModel>()
         val isLoginSuccess = viewModel.isLoginSuccess.collectAsState().value
         val hostState = remember { SnackbarHostState() }
+        val profileUiState = viewModel.profileUiState.collectAsState()
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -86,8 +89,16 @@ data class LoginScreen(val platform: Platform) : Screen {
                             viewModel.login(
                                 identifier,
                                 password,
-                                navigator,
-                                hostState
+                                onSuccess = {
+                                    navigator.popUntilRoot()
+                                    navigator.replace(
+                                        HomeScreen(
+                                            profileUiState.value,
+                                            ScreenType.HOME
+                                        )
+                                    )
+                                },
+                                onFailure = { hostState.showSnackbar("Log in Failed...") }
                             )
                         }
                     )

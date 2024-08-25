@@ -1,6 +1,5 @@
 package app.skypub.feature.auth
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -8,14 +7,11 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.skypub.common.ProfileUiState
-import app.skypub.common.ScreenType
 import app.skypub.data.repository.AuthRepository
 import app.skypub.data.repository.InitializeRepository
-import app.skypub.home.HomeScreen
 import app.skypub.network.model.CreateSessionResponse
 import app.skypub.network.model.RequestErrorResponse
 import arrow.core.Either
-import cafe.adriel.voyager.navigator.Navigator
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +27,7 @@ class AuthViewModel(
     private var _isLoginSuccess: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val isLoginSuccess: StateFlow<Boolean?> = _isLoginSuccess.asStateFlow()
 
-    private val _profileUiState = MutableStateFlow(ProfileUiState("", "", "", 0, 0))
+    private var _profileUiState = MutableStateFlow(ProfileUiState("", "", "", 0, 0))
     val profileUiState = _profileUiState.asStateFlow()
 
     private suspend fun createSession(
@@ -44,15 +40,15 @@ class AuthViewModel(
     fun login(
         identifier: String,
         password: String,
-        navigator: Navigator,
-        snackbarHostState: SnackbarHostState
+        onSuccess: suspend () -> Unit = {},
+        onFailure: suspend () -> Unit = {}
     ) {
         viewModelScope.launch {
             when (val response = createSession(identifier, password)) {
                 is Either.Left -> {
                     _isLoginSuccess.value = false
                     Napier.e(tag = "createSessionError") { "message: ${response.value.message}" }
-                    snackbarHostState.showSnackbar("Login failed!")
+                    onFailure()
                 }
 
                 is Either.Right -> {
@@ -64,33 +60,28 @@ class AuthViewModel(
                         it[refreshJwtKey] = response.value.refreshJwt
                         it[identifierKey] = identifier
                     }
-                    _isLoginSuccess.value = true
                     fetchProfile()
-                    navigator.popUntilRoot()
-                    navigator.replace(HomeScreen(profileUiState.value, ScreenType.HOME))
+                    _isLoginSuccess.value = true
+                    onSuccess()
                 }
             }
         }
     }
 
-    private fun fetchProfile() {
-        viewModelScope.launch {
-            val identifier = dataStore.data.first()[stringPreferencesKey("identifier")] ?: ""
-            when (val result = initializeRepository.getProfile(identifier)) {
-                is Either.Right -> {
-                    _profileUiState.value = ProfileUiState(
-                        avatar = result.value.avatar,
-                        handle = result.value.handle,
-                        displayName = result.value.displayName,
-                        followsCount = result.value.followsCount,
-                        followersCount = result.value.followersCount
-                    )
-                }
+    private suspend fun fetchProfile() {
+        val identifier = dataStore.data.first()[stringPreferencesKey("identifier")] ?: ""
+        when (val result = initializeRepository.getProfile(identifier)) {
+            is Either.Right -> {
+                _profileUiState.value.avatar = result.value.avatar
+                _profileUiState.value.handle = result.value.handle
+                _profileUiState.value.displayName = result.value.displayName
+                _profileUiState.value.followsCount = result.value.followsCount
+                _profileUiState.value.followersCount = result.value.followersCount
+            }
 
-                is Either.Left -> {
-                    Napier.e(tag = "getProfileError") {
-                        "message: ${result.value.message}"
-                    }
+            is Either.Left -> {
+                Napier.e(tag = "getProfileError") {
+                    "message: ${result.value.message}"
                 }
             }
         }
