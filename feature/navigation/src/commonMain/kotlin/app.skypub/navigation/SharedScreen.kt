@@ -24,3 +24,12 @@ sealed class UserScreen : ScreenProvider {
         val handle: String
     ) : UserScreen()
 }
+
+sealed class ReplyScreen : ScreenProvider {
+    data class Reply(
+        val name: String,
+        val handle: String,
+        val thumbnail: String,
+        val post: String
+    ) : ReplyScreen()
+}
