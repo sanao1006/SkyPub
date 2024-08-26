@@ -3,6 +3,7 @@ package app.skypub.post
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,15 +17,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -44,6 +52,12 @@ class ReplyScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         var isDialogShow by rememberSaveable { mutableStateOf(false) }
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+        val text = rememberSaveable { mutableStateOf("") }
+        val focusRequester = remember { FocusRequester() }
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
 
         if (isDialogShow) {
             AlertDialog(
@@ -69,11 +83,18 @@ class ReplyScreen(
             )
         }
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 TopAppBar(
                     title = {},
                     navigationIcon = {
-                        IconButton(onClick = { isDialogShow = true }) {
+                        IconButton(onClick = {
+                            if (text.value.isBlank()) {
+                                navigator.pop()
+                            } else {
+                                isDialogShow = true
+                            }
+                        }) {
                             Icon(Icons.Default.Close, contentDescription = "")
                         }
                     },
@@ -92,7 +113,13 @@ class ReplyScreen(
                     thumbnail = thumbnail,
                     post = post
                 )
+                Spacer(modifier = Modifier.size(8.dp))
 
+                TextField(
+                    modifier = Modifier.fillMaxSize().focusRequester(focusRequester),
+                    value = text.value, onValueChange = { text.value = it },
+                    placeholder = { Text("Reply") }
+                )
             }
         }
     }
