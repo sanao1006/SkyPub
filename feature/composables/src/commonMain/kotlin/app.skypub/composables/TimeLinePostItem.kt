@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.skypub.navigation.ReplyScreen
 import app.skypub.navigation.UserScreen
 import app.skypub.network.model.FeedItem
 import cafe.adriel.voyager.core.registry.rememberScreen
@@ -46,6 +47,14 @@ fun TimeLinePostItem(
 ) {
     val userDetailScreen = rememberScreen(
         UserScreen.UserDetail(feed.post.author.handle)
+    )
+    val replyScreen = rememberScreen(
+        ReplyScreen.Reply(
+            name = feed.post.author.displayName,
+            handle = feed.post.author.handle,
+            thumbnail = feed.post.author.avatar,
+            post = feed.post.record.jsonObject["text"]?.jsonPrimitive?.content ?: ""
+        )
     )
     Row(modifier = modifier) {
         AsyncImage(
@@ -73,7 +82,8 @@ fun TimeLinePostItem(
             Spacer(modifier = Modifier.height(6.dp))
             TimeLinePostContentIcons(
                 feed = feed,
-                onIconClick = onIconClick
+                onFavIconClick = onIconClick,
+                onReplyIconClick = { navigator.push(replyScreen) }
             )
         }
     }
@@ -82,7 +92,8 @@ fun TimeLinePostItem(
 @Composable
 private fun TimeLinePostContentIcons(
     feed: FeedItem,
-    onIconClick: (ContentIcons, String, String, String) -> Unit,
+    onFavIconClick: (ContentIcons, String, String, String) -> Unit,
+    onReplyIconClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -99,12 +110,22 @@ private fun TimeLinePostContentIcons(
                 Icon(
                     modifier = Modifier.scale(0.8f)
                         .clickable {
-                            onIconClick(
-                                item,
-                                feed.post.author.did,
-                                feed.post.uri,
-                                feed.post.cid
-                            )
+                            when (item) {
+                                ContentIcons.FavoriteBorder -> {
+                                    onFavIconClick(
+                                        item,
+                                        feed.post.author.did,
+                                        feed.post.uri,
+                                        feed.post.cid
+                                    )
+                                }
+
+                                ContentIcons.ChatBubbleOutline -> {
+                                    onReplyIconClick()
+                                }
+
+                                else -> {}
+                            }
                         },
                     painter = rememberVectorPainter(item.getIconState(feed.post.viewer?.like)),
                     contentDescription = ""
