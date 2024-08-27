@@ -10,8 +10,6 @@ import app.skypub.network.model.CreateRecordInput
 import app.skypub.network.model.ReplyRef
 import arrow.core.Either
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -20,10 +18,11 @@ class PostViewModel(
     private val postRepository: PostRepository,
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
-    private val _isSuccessCreatePost: MutableStateFlow<Boolean?> = MutableStateFlow(null)
-    val isSuccessCreatePostFlow = _isSuccessCreatePost.asStateFlow()
-
-    fun createPost(text: String) {
+    fun createPost(
+        text: String,
+        onSuccess: () -> Unit = {},
+        onError: () -> Unit = {}
+    ) {
         viewModelScope.launch {
             val identifier =
                 dataStore.data.first()[stringPreferencesKey("identifier")] ?: return@launch
@@ -37,11 +36,11 @@ class PostViewModel(
             )
             ) {
                 is Either.Right -> {
-                    _isSuccessCreatePost.value = true
+                    onSuccess()
                 }
 
                 is Either.Left -> {
-                    _isSuccessCreatePost.value = false
+                    onError()
                     Napier.e(tag = "PostViewModel") { "message: ${result.value.message}" }
                 }
             }
