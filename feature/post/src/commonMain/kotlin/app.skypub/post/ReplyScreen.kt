@@ -109,10 +109,10 @@ class ReplyScreen(
                                 text = text.value,
                                 ref = reply,
                                 onSuccess = {
-                                    navigator.popUntilRoot()
+                                    navigator.pop()
                                 },
                                 onError = {
-                                    navigator.popUntilRoot()
+                                    navigator.pop()
                                 }
                             )
                         }
