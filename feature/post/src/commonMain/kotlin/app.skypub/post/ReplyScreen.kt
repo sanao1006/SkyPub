@@ -35,17 +35,20 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.skypub.network.model.ReplyRef
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
+import org.koin.compose.koinInject
 
 class ReplyScreen(
     private val name: String,
     private val handle: String,
     private val thumbnail: String,
-    private val post: String
+    private val post: String,
+    private val reply: ReplyRef
 ) : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -55,6 +58,8 @@ class ReplyScreen(
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         val text = rememberSaveable { mutableStateOf("") }
         val focusRequester = remember { FocusRequester() }
+        val viewModel = koinInject<PostViewModel>()
+
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
         }
@@ -99,7 +104,19 @@ class ReplyScreen(
                         }
                     },
                     actions = {
-                        TextButton(onClick = {}) {
+                        TextButton(onClick = {
+                            viewModel.createReply(
+                                text = text.value,
+                                ref = reply,
+                                onSuccess = {
+                                    navigator.popUntilRoot()
+                                },
+                                onError = {
+                                    navigator.popUntilRoot()
+                                }
+                            )
+                        }
+                        ) {
                             Text("Reply")
                         }
                     }

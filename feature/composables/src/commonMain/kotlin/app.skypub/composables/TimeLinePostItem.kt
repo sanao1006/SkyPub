@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import app.skypub.navigation.ReplyScreen
 import app.skypub.navigation.UserScreen
 import app.skypub.network.model.FeedItem
+import app.skypub.network.model.Ref
+import app.skypub.network.model.ReplyRef
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.navigator.Navigator
 import com.github.panpf.sketch.AsyncImage
@@ -48,12 +50,31 @@ fun TimeLinePostItem(
     val userDetailScreen = rememberScreen(
         UserScreen.UserDetail(feed.post.author.handle)
     )
+    val ref = Ref(
+        uri = feed.post.uri,
+        cid = feed.post.cid
+    )
+    val replyRef = if (feed.reply == null) {
+        ReplyRef(
+            parent = ref,
+            root = ref
+        )
+    } else {
+        ReplyRef(
+            parent = ref,
+            root = Ref(
+                uri = feed.reply!!.root.jsonObject["uri"]?.jsonPrimitive?.content ?: "",
+                cid = feed.reply!!.root.jsonObject["cid"]?.jsonPrimitive?.content ?: ""
+            )
+        )
+    }
     val replyScreen = rememberScreen(
         ReplyScreen.Reply(
             name = feed.post.author.displayName,
             handle = feed.post.author.handle,
             thumbnail = feed.post.author.avatar,
-            post = feed.post.record.jsonObject["text"]?.jsonPrimitive?.content ?: ""
+            post = feed.post.record.jsonObject["text"]?.jsonPrimitive?.content ?: "",
+            ref = replyRef
         )
     )
     Row(modifier = modifier) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.skypub.data.repository.PostRepository
 import app.skypub.network.model.CreateRecordInput
+import app.skypub.network.model.ReplyRef
 import arrow.core.Either
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,4 +47,36 @@ class PostViewModel(
             }
         }
     }
+
+    fun createReply(
+        text: String,
+        ref: ReplyRef,
+        onSuccess: () -> Unit = {},
+        onError: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            val identifier =
+                dataStore.data.first()[stringPreferencesKey("identifier")] ?: return@launch
+            when (val result = postRepository.createRecord(
+                identifier = identifier,
+                collection = "app.bsky.feed.post",
+                input = CreateRecordInput(
+                    text = text,
+                    createdAt = Clock.System.now().toString(),
+                    reply = ref
+                )
+            )
+            ) {
+                is Either.Right -> {
+                    onSuccess()
+                }
+
+                is Either.Left -> {
+                    onError()
+                    Napier.e(tag = "PostViewModel") { "message: ${result.value.message}" }
+                }
+            }
+        }
+    }
+
 }

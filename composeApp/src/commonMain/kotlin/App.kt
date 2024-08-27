@@ -43,7 +43,7 @@ fun App() {
             LoginScreen(platform = Platform.Bluesky)
         }
         register<ReplyScreen.Reply> {
-            app.skypub.post.ReplyScreen(it.name, it.handle, it.thumbnail, it.post)
+            app.skypub.post.ReplyScreen(it.name, it.handle, it.thumbnail, it.post, it.ref)
         }
     }
 
