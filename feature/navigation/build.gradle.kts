@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.voyager)
             api(projects.core.common)
+            api(projects.core.network)
         }
     }
 }

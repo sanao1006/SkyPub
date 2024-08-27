@@ -2,6 +2,7 @@ package app.skypub.navigation
 
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
+import app.skypub.network.model.ReplyRef
 import cafe.adriel.voyager.core.registry.ScreenProvider
 
 sealed class SharedScreen : ScreenProvider {
@@ -23,4 +24,14 @@ sealed class UserScreen : ScreenProvider {
     data class UserDetail(
         val handle: String
     ) : UserScreen()
+}
+
+sealed class ReplyScreen : ScreenProvider {
+    data class Reply(
+        val name: String,
+        val handle: String,
+        val thumbnail: String,
+        val post: String,
+        val ref: ReplyRef
+    ) : ReplyScreen()
 }

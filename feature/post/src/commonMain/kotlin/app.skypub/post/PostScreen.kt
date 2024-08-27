@@ -49,8 +49,11 @@ class PostScreen : Screen {
                     },
                     actions = {
                         Button(onClick = {
-                            viewModel.createPost(text = text.value)
-                            navigator.pop()
+                            viewModel.createPost(
+                                text = text.value,
+                                onSuccess = { navigator.pop() },
+                                onError = { navigator.pop() }
+                            )
                         }) {
                             Text("Post")
                         }

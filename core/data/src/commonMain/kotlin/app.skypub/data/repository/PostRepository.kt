@@ -13,4 +13,12 @@ interface PostRepository {
         validate: Boolean = true,
         input: CreateRecordInput
     ): Either<RequestErrorResponse, CreateRecordResponse>
+
+    suspend fun createReply(
+        identifier: String,
+        collection: String,
+        rkey: String? = null,
+        validate: Boolean = true,
+        input: CreateRecordInput
+    ): Either<RequestErrorResponse, CreateRecordResponse>
 }
