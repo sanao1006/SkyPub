@@ -14,6 +14,8 @@ kotlin {
             api(projects.core.network)
             api(projects.feature.navigation)
             api(projects.core.common)
+            api(projects.feature.composables)
+            api(projects.core.ui)
         }
     }
 }

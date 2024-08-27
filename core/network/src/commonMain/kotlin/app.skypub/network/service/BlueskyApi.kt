@@ -46,4 +46,6 @@ interface BlueskyApi {
 //        limit: Int?,
 //        cursor: String?,
     ): Either<RequestErrorResponse, GetAuthorFeedResponse>
+
+    suspend fun deleteSession(): Either<RequestErrorResponse, Unit>
 }

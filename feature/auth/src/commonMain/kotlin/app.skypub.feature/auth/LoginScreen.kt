@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,11 +39,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import app.skypub.common.ScreenType
+import app.skypub.home.HomeScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 
@@ -56,20 +54,12 @@ data class LoginScreen(val platform: Platform) : Screen {
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
         val viewModel: AuthViewModel = koinInject<AuthViewModel>()
-        val isLoginSuccess = viewModel.isLoginSuccess.collectAsState().value
         val hostState = remember { SnackbarHostState() }
+        val profileUiState = viewModel.profileUiState.collectAsState()
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Login ${platform.value}") },
-                    navigationIcon = {
-                        IconButton(onClick = navigator::pop) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = ""
-                            )
-                        }
-                    }
+                    title = { Text("SkyPub") }
                 )
             },
             snackbarHost = { SnackbarHost(hostState = hostState) }
@@ -81,17 +71,24 @@ data class LoginScreen(val platform: Platform) : Screen {
             ) {
                 when (platform) {
                     Platform.Bluesky -> BlueSkyLoginScreen(
-                        hostState = hostState,
-                        isLoginSuccess = isLoginSuccess,
                         onClick = { identifier, password ->
                             viewModel.login(
                                 identifier,
                                 password,
-                                navigator
+                                onSuccess = {
+                                    navigator.popUntilRoot()
+                                    navigator.replace(
+                                        HomeScreen(
+                                            profileUiState.value,
+                                            ScreenType.HOME
+                                        )
+                                    )
+                                },
+                                onFailure = { hostState.showSnackbar("Log in Failed...") }
                             )
                         }
                     )
-
+                    // TODO someday implement Misskey
                     Platform.Misskey -> MisskeyLoginScreen()
                 }
             }
@@ -101,15 +98,12 @@ data class LoginScreen(val platform: Platform) : Screen {
 
 @Composable
 fun BlueSkyLoginScreen(
-    hostState: SnackbarHostState,
-    isLoginSuccess: Boolean?,
     onClick: (String, String) -> Unit = { identifier, password -> }
 ) {
-    val scope = rememberCoroutineScope()
     var userName by rememberSaveable { mutableStateOf("") }
     var passWord by rememberSaveable { mutableStateOf("") }
     Column(horizontalAlignment = Alignment.Start) {
-        Text("account", modifier = Modifier.align(Alignment.Start))
+        Text("Login Bluesky", modifier = Modifier.align(Alignment.Start))
         Spacer(modifier = Modifier.height(4.dp))
         val focusManager = LocalFocusManager.current
         TextField(
@@ -135,7 +129,7 @@ fun BlueSkyLoginScreen(
             ),
             placeholder = { Text("email or user name") }
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         TextField(
             modifier = Modifier.onPreviewKeyEvent {
                 if (it.key == Key.Tab) {
@@ -163,11 +157,6 @@ fun BlueSkyLoginScreen(
         modifier = Modifier.fillMaxWidth().wrapContentHeight()
     ) {
         Text("Login")
-    }
-    if (isLoginSuccess != null && !isLoginSuccess) {
-        scope.launch {
-            hostState.showSnackbar("Login failed. The identifier or password is wrong.")
-        }
     }
 }
 

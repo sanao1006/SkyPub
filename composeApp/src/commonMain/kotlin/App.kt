@@ -6,7 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import app.skypub.common.ScreenType
-import app.skypub.feature.auth.AuthScreenNavigation
+import app.skypub.feature.auth.LoginScreen
+import app.skypub.feature.auth.Platform
 import app.skypub.home.HomeScreen
 import app.skypub.navigation.SharedScreen
 import app.skypub.navigation.UserScreen
@@ -29,13 +30,16 @@ fun App() {
 
     ScreenRegistry {
         register<SharedScreen.Home> {
-            HomeScreen(profileUiState, ScreenType.HOME)
+            HomeScreen(it.profileUiState, ScreenType.HOME)
         }
         register<SharedScreen.Notification> {
-            NotificationScreen(profileUiState, ScreenType.NOTIFICATION)
+            NotificationScreen(it.profileUiState, ScreenType.NOTIFICATION)
         }
         register<UserScreen.UserDetail> {
             UserDetailScreen(it.handle)
+        }
+        register<app.skypub.ui.LoginScreen.Login> {
+            LoginScreen(platform = Platform.Bluesky)
         }
     }
 
@@ -57,7 +61,9 @@ fun App() {
                     }
                 }
 
-                false -> Navigator(AuthScreenNavigation())
+                false -> Navigator(
+                    LoginScreen(platform = Platform.Bluesky)
+                )
             }
         }
     }

@@ -16,6 +16,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -34,12 +36,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
+import app.skypub.composables.ContentIcons
 import app.skypub.navigation.SharedScreen
 import app.skypub.navigation.UserScreen
 import app.skypub.post.PostScreen
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
+import app.skypub.ui.NavigationDrawerMainMenu
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -77,17 +81,20 @@ class HomeScreen(
                 handle = profileUiState.handle
             )
         )
+        val hostState = remember { SnackbarHostState() }
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
         ModalNavigationDrawerWrapper(
+            snackbarHostState = hostState,
+            navigator = navigator,
             screenType = screenType,
-            onMenuItemClick = { index ->
-                when (index) {
-                    0 -> {}
-                    1 -> {
-                        navigator.push(notificationScreen)
-                    }
+            onMenuItemClick = { item ->
+                when (item) {
+                    NavigationDrawerMainMenu.HOME -> {}
+                    NavigationDrawerMainMenu.NOTIFICATIONS -> navigator.push(
+                        notificationScreen
+                    )
                 }
             },
             drawerContent = {
@@ -108,6 +115,7 @@ class HomeScreen(
             drawerState = drawerState
         ) {
             Scaffold(
+                snackbarHost = { SnackbarHost(hostState = hostState) },
                 modifier = Modifier
                     .nestedScroll(bottomScrollBehavior.nestedScrollConnection)
                     .nestedScroll(topScrollBehavior.nestedScrollConnection),
@@ -168,7 +176,13 @@ class HomeScreen(
                     modifier = Modifier
                         .padding(it)
                         .background(color = MaterialTheme.colorScheme.surfaceContainerLowest)
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    onIconClick = { icon, identifier, uri, cid ->
+                        when (icon) {
+                            ContentIcons.FavoriteBorder -> viewmodel.like(identifier, uri, cid)
+                            else -> {}
+                        }
+                    }
                 )
             }
         }

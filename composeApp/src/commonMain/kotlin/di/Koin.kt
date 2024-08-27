@@ -8,6 +8,7 @@ import app.skypub.home.HomeViewModel
 import app.skypub.network.module.blueskyModule
 import app.skypub.notification.NotificationViewModel
 import app.skypub.post.PostViewModel
+import app.skypub.ui.NavDrawerViewModel
 import app.skypub.user.UserDetailScreenViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
@@ -33,4 +34,5 @@ val dataRepositoryModule = module {
     viewModelOf(::PostViewModel)
     viewModelOf(::NotificationViewModel)
     viewModelOf(::UserDetailScreenViewModel)
+    viewModelOf(::NavDrawerViewModel)
 }

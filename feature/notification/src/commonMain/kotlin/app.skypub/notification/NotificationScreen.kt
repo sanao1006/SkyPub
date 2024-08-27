@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,6 +51,7 @@ import app.skypub.network.model.NotificationDomainModel
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
+import app.skypub.ui.NavigationDrawerMainMenu
 import app.skypub.ui.ScaffoldScreenContent
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
@@ -83,24 +85,35 @@ class NotificationScreen(
         val bottomScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         val scope = rememberCoroutineScope()
         val myProfileScreen = rememberScreen(UserScreen.UserDetail(profileUiState.handle))
-        ModalNavigationDrawerWrapper(screenType = screenType, onMenuItemClick = { index ->
-            when (index) {
-                0 -> navigator.push(homeScreen)
-                1 -> {}
-            }
-        }, drawerContent = {
-            DrawerContent(avatar = profileUiState.avatar,
-                displayName = profileUiState.displayName,
-                handle = profileUiState.handle,
-                followersCount = profileUiState.followersCount,
-                followsCount = profileUiState.followsCount,
-                onAvatarClick = {
-                    scope.launch {
-                        drawerState.close()
-                        navigator.push(myProfileScreen)
+        val hostState = remember { SnackbarHostState() }
+
+        ModalNavigationDrawerWrapper(
+            snackbarHostState = hostState,
+            navigator = navigator,
+            screenType = screenType,
+            onMenuItemClick = { item ->
+                when (item) {
+                    NavigationDrawerMainMenu.HOME -> {
+                        navigator.push(homeScreen)
                     }
-                })
-        }, drawerState = drawerState
+
+                    NavigationDrawerMainMenu.NOTIFICATIONS -> {}
+                }
+            },
+            drawerContent = {
+                DrawerContent(avatar = profileUiState.avatar,
+                    displayName = profileUiState.displayName,
+                    handle = profileUiState.handle,
+                    followersCount = profileUiState.followersCount,
+                    followsCount = profileUiState.followsCount,
+                    onAvatarClick = {
+                        scope.launch {
+                            drawerState.close()
+                            navigator.push(myProfileScreen)
+                        }
+                    })
+            },
+            drawerState = drawerState,
         ) {
             Scaffold(modifier = Modifier.nestedScroll(bottomScrollBehavior.nestedScrollConnection)
                 .nestedScroll(topScrollBehavior.nestedScrollConnection), topBar = {
@@ -148,9 +161,9 @@ class NotificationScreen(
             }) {
                 ScaffoldScreenContent(modifier = Modifier.padding(it),
                     items = uiState.notifications,
-                    content = { it ->
+                    content = { notificationDomainModel ->
                         NotificationItem(
-                            notification = it,
+                            notification = notificationDomainModel,
                             navigator = navigator,
                             modifier = Modifier.padding(top = 12.dp)
                         )
