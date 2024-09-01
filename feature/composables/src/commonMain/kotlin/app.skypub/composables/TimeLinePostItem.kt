@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import app.skypub.navigation.PostDetailScreen
 import app.skypub.navigation.ReplyScreen
 import app.skypub.navigation.UserScreen
 import app.skypub.network.model.FeedItem
@@ -49,6 +50,12 @@ fun TimeLinePostItem(
 ) {
     val userDetailScreen = rememberScreen(
         UserScreen.UserDetail(feed.post.author.handle)
+    )
+    val postDetailScreen = rememberScreen(
+        PostDetailScreen.PostDetail(
+            post = feed.post,
+            reply = feed.reply
+        )
     )
     val ref = Ref(
         uri = feed.post.uri,
@@ -77,7 +84,7 @@ fun TimeLinePostItem(
             ref = replyRef
         )
     )
-    Row(modifier = modifier) {
+    Row(modifier = modifier.clickable { navigator.push(postDetailScreen) }) {
         AsyncImage(
             modifier = Modifier.size(40.dp).clip(CircleShape)
                 .clickable(onClick = { navigator.push(userDetailScreen) }),
