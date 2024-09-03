@@ -2,6 +2,8 @@ package app.skypub.navigation
 
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
+import app.skypub.network.model.Post
+import app.skypub.network.model.Reply
 import app.skypub.network.model.ReplyRef
 import cafe.adriel.voyager.core.registry.ScreenProvider
 
@@ -34,4 +36,11 @@ sealed class ReplyScreen : ScreenProvider {
         val post: String,
         val ref: ReplyRef
     ) : ReplyScreen()
+}
+
+sealed class PostDetailScreen : ScreenProvider {
+    data class PostDetail(
+        val post: Post,
+        val reply: Reply?
+    ) : PostDetailScreen()
 }

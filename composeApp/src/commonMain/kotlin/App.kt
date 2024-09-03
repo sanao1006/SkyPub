@@ -9,6 +9,7 @@ import app.skypub.common.ScreenType
 import app.skypub.feature.auth.LoginScreen
 import app.skypub.feature.auth.Platform
 import app.skypub.home.HomeScreen
+import app.skypub.navigation.PostDetailScreen
 import app.skypub.navigation.ReplyScreen
 import app.skypub.navigation.SharedScreen
 import app.skypub.navigation.UserScreen
@@ -44,6 +45,9 @@ fun App() {
         }
         register<ReplyScreen.Reply> {
             app.skypub.post.ReplyScreen(it.name, it.handle, it.thumbnail, it.post, it.ref)
+        }
+        register<PostDetailScreen.PostDetail> {
+            com.example.postdetail.PostDetailScreen(it.post, it.reply)
         }
     }
 
