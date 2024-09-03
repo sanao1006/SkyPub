@@ -8,6 +8,7 @@ kotlin {
             implementation(libs.voyager)
             implementation(projects.core.data)
             api(projects.core.network)
+            api(libs.sketch.compose)
         }
     }
 }
