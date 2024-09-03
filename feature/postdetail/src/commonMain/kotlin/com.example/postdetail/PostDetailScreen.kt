@@ -3,6 +3,7 @@ package com.example.postdetail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -31,6 +32,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class PostDetailScreen(
     private val post: Post,
@@ -59,6 +62,9 @@ class PostDetailScreen(
                 modifier = Modifier.padding(horizontal = 8.dp).padding(it)
             ) {
                 PostDetailHeader()
+                Spacer(modifier = Modifier.height(8.dp))
+                PostDetailContent()
+
             }
         }
     }
@@ -91,6 +97,19 @@ class PostDetailScreen(
             TextButton(onClick = { /* follow */ }) {
                 Text(text = "Follow")
             }
+        }
+    }
+
+    @Composable
+    fun PostDetailContent(modifier: Modifier = Modifier) {
+        Column(modifier) {
+            Text(
+                text = post.record.jsonObject["text"]?.jsonPrimitive?.content ?: "",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            // TODO Display Date
+
         }
     }
 }
