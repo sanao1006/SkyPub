@@ -9,6 +9,7 @@ kotlin {
             implementation(projects.core.data)
             api(projects.core.network)
             api(libs.sketch.compose)
+            api(projects.feature.composables)
         }
     }
 }
