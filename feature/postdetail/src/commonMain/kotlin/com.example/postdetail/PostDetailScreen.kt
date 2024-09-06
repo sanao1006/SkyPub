@@ -1,5 +1,6 @@
 package com.example.postdetail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,10 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.skypub.composables.ContentIcons
+import app.skypub.navigation.UserScreen
 import app.skypub.network.model.Post
 import app.skypub.network.model.Reply
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
@@ -68,7 +72,7 @@ class PostDetailScreen(
             Column(
                 modifier = Modifier.padding(horizontal = 8.dp).padding(it)
             ) {
-                PostDetailHeader()
+                PostDetailHeader(navigator = navigator)
                 Spacer(modifier = Modifier.height(8.dp))
                 PostDetailContent()
                 HorizontalDivider()
@@ -81,7 +85,13 @@ class PostDetailScreen(
     }
 
     @Composable
-    fun PostDetailHeader(modifier: Modifier = Modifier) {
+    fun PostDetailHeader(
+        modifier: Modifier = Modifier,
+        navigator: Navigator
+    ) {
+        val userDetailScreen = rememberScreen(
+            UserScreen.UserDetail(post.author.handle)
+        )
         Row(
             modifier = modifier,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -90,7 +100,10 @@ class PostDetailScreen(
                 request = ComposableImageRequest(uri = post.author.avatar),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.clip(CircleShape).size(48.dp)
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(48.dp)
+                    .clickable { navigator.push(userDetailScreen) },
             )
             Spacer(modifier = Modifier.size(16.dp))
             Column(modifier = Modifier.wrapContentHeight()) {
