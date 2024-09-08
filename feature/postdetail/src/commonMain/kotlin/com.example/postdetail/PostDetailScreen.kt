@@ -1,16 +1,21 @@
 package com.example.postdetail
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,10 +30,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.skypub.composables.ContentIcons
+import app.skypub.navigation.UserScreen
 import app.skypub.network.model.Post
 import app.skypub.network.model.Reply
+import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
@@ -61,22 +70,38 @@ class PostDetailScreen(
             Column(
                 modifier = Modifier.padding(horizontal = 8.dp).padding(it)
             ) {
-                PostDetailHeader()
+                PostDetailHeader(navigator = navigator)
                 Spacer(modifier = Modifier.height(8.dp))
                 PostDetailContent()
-
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(12.dp))
+                PostDetailActions()
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider()
             }
         }
     }
 
     @Composable
-    fun PostDetailHeader(modifier: Modifier = Modifier) {
-        Row(modifier = modifier) {
+    fun PostDetailHeader(
+        modifier: Modifier = Modifier,
+        navigator: Navigator
+    ) {
+        val userDetailScreen = rememberScreen(
+            UserScreen.UserDetail(post.author.handle)
+        )
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             AsyncImage(
                 request = ComposableImageRequest(uri = post.author.avatar),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.clip(CircleShape).size(48.dp)
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(48.dp)
+                    .clickable { navigator.push(userDetailScreen) },
             )
             Spacer(modifier = Modifier.size(16.dp))
             Column(modifier = Modifier.wrapContentHeight()) {
@@ -110,6 +135,47 @@ class PostDetailScreen(
             Spacer(modifier = Modifier.height(16.dp))
             // TODO Display Date
 
+        }
+    }
+
+    @Composable
+    fun PostDetailActions(modifier: Modifier = Modifier) {
+        Row(
+            modifier = modifier.fillMaxWidth(0.7f).padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            ContentIcons.entries.forEachIndexed { index, item ->
+                Row {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.name,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = when (item) {
+                            ContentIcons.ChatBubbleOutline -> {
+                                val replyCount = post.replyCount
+                                replyCount.let { if (replyCount > 0) replyCount.toString() else "" }
+                            }
+
+                            ContentIcons.Repeat -> {
+                                val repostCount = post.repostCount
+                                repostCount.let { if (repostCount > 0) repostCount.toString() else "" }
+                            }
+
+
+                            ContentIcons.FavoriteBorder -> {
+                                val likeCount = post.likeCount
+                                likeCount.let { if (likeCount > 0) likeCount.toString() else "" }
+                            }
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
     }
 }

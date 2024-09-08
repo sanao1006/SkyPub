@@ -12,7 +12,7 @@ data class Notification(
     @SerialName("author")
     val author: Author,
     @SerialName("cid")
-    val cid: String,
+    val cid: String? = null,
     @SerialName("indexedAt")
     val indexedAt: String,
     @SerialName("isRead")
