@@ -18,12 +18,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import app.skypub.composables.RepostBottomSheet
 import app.skypub.composables.TimeLinePostItem
 import app.skypub.ui.ScaffoldScreenContent
 import cafe.adriel.voyager.core.screen.Screen
@@ -42,6 +46,7 @@ class UserDetailScreen(private val handle: String) : Screen {
         val scope = rememberCoroutineScope()
         val state = viewmodel.uiState.collectAsState().value
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+        var openRepostModal by remember { mutableStateOf(false) }
         LaunchedEffect(Unit) {
             viewmodel.getUiState(handle)
         }
@@ -85,12 +90,18 @@ class UserDetailScreen(private val handle: String) : Screen {
                                 navigator = navigator,
                                 feed = feed,
                                 modifier = Modifier.padding(top = 8.dp, bottom = 2.dp),
-                                onIconClick = { _, _, _, _ -> }
+                                onIconClick = { _, _, _, _ -> },
+                                onRepostIconClick = { openRepostModal = true }
                             )
                         }
                     }
                 }
             }
+        }
+        if (openRepostModal) {
+            RepostBottomSheet(
+                onDismiss = { openRepostModal = it }
+            )
         }
     }
 }

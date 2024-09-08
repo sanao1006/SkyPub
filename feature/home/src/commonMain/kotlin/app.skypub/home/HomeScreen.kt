@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -37,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
 import app.skypub.composables.ContentIcons
+import app.skypub.composables.RepostBottomSheet
 import app.skypub.navigation.SharedScreen
 import app.skypub.navigation.UserScreen
 import app.skypub.post.PostScreen
@@ -85,6 +87,7 @@ class HomeScreen(
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
+        var openRepostModal by remember { mutableStateOf(false) }
         ModalNavigationDrawerWrapper(
             snackbarHostState = hostState,
             navigator = navigator,
@@ -182,9 +185,16 @@ class HomeScreen(
                             ContentIcons.FavoriteBorder -> viewmodel.like(identifier, uri, cid)
                             else -> {}
                         }
-                    }
+                    },
+                    onRepostIconClick = { openRepostModal = true }
                 )
             }
+        }
+
+        if (openRepostModal) {
+            RepostBottomSheet(
+                onDismiss = { openRepostModal = it }
+            )
         }
     }
 }

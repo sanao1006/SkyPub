@@ -46,7 +46,8 @@ fun TimeLinePostItem(
     navigator: Navigator,
     feed: FeedItem,
     modifier: Modifier = Modifier,
-    onIconClick: (ContentIcons, String, String, String) -> Unit
+    onIconClick: (ContentIcons, String, String, String) -> Unit,
+    onRepostIconClick: () -> Unit = {}
 ) {
     val userDetailScreen = rememberScreen(
         UserScreen.UserDetail(feed.post.author.handle)
@@ -111,7 +112,8 @@ fun TimeLinePostItem(
             TimeLinePostContentIcons(
                 feed = feed,
                 onFavIconClick = onIconClick,
-                onReplyIconClick = { navigator.push(replyScreen) }
+                onReplyIconClick = { navigator.push(replyScreen) },
+                onRepostIconClick = onRepostIconClick
             )
         }
     }
@@ -122,6 +124,7 @@ private fun TimeLinePostContentIcons(
     feed: FeedItem,
     onFavIconClick: (ContentIcons, String, String, String) -> Unit,
     onReplyIconClick: () -> Unit,
+    onRepostIconClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -152,7 +155,9 @@ private fun TimeLinePostContentIcons(
                                     onReplyIconClick()
                                 }
 
-                                else -> {}
+                                ContentIcons.Repeat -> {
+                                    onRepostIconClick()
+                                }
                             }
                         },
                     painter = rememberVectorPainter(item.getIconState(feed.post.viewer?.like)),
