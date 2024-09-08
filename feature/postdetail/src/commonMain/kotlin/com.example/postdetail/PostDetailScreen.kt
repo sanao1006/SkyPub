@@ -41,7 +41,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
-import io.github.aakira.napier.Napier
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -52,7 +51,6 @@ class PostDetailScreen(
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        Napier.d(tag = "ray") { "reply $reply" }
         val navigator = LocalNavigator.currentOrThrow
         Scaffold(
             topBar = {
@@ -157,24 +155,19 @@ class PostDetailScreen(
                     Text(
                         text = when (item) {
                             ContentIcons.ChatBubbleOutline -> {
-                                val replyCount =
-                                    reply?.root?.jsonObject?.get("replyCount")?.jsonPrimitive?.content
-                                replyCount?.let { "$replyCount" } ?: ""
+                                val replyCount = post.replyCount
+                                replyCount.let { if (replyCount > 0) replyCount.toString() else "" }
                             }
 
                             ContentIcons.Repeat -> {
-                                val repostCount =
-                                    reply?.root?.jsonObject?.get("repostCount")?.jsonPrimitive?.content
-
-                                repostCount?.let { "$repostCount" } ?: ""
+                                val repostCount = post.repostCount
+                                repostCount.let { if (repostCount > 0) repostCount.toString() else "" }
                             }
 
 
                             ContentIcons.FavoriteBorder -> {
-                                val likeCount =
-                                    reply?.root?.jsonObject?.get("likeCount")?.jsonPrimitive?.content
-
-                                likeCount?.let { "$likeCount" } ?: ""
+                                val likeCount = post.likeCount
+                                likeCount.let { if (likeCount > 0) likeCount.toString() else "" }
                             }
                         },
                         style = MaterialTheme.typography.bodyMedium,

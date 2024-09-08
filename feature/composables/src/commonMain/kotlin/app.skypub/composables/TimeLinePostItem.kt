@@ -189,12 +189,9 @@ enum class ContentIcons(val icon: ImageVector, val filledIcon: ImageVector?) {
 
     fun getIconCount(feed: FeedItem, contentIcons: ContentIcons): String {
         return when (contentIcons) {
-            ChatBubbleOutline -> feed.reply?.root?.jsonObject?.get("replyCount")?.jsonPrimitive?.content
-                ?: ""
-
-            Repeat -> feed.reply?.root?.jsonObject?.get("repostCount")?.jsonPrimitive?.content ?: ""
-            FavoriteBorder -> feed.reply?.root?.jsonObject?.get("likeCount")?.jsonPrimitive?.content
-                ?: ""
+            ChatBubbleOutline -> feed.post.replyCount.let { if (it > 0) it.toString() else "" }
+            Repeat -> feed.post.repostCount.let { if (it > 0) it.toString() else "" }
+            FavoriteBorder -> feed.post.likeCount.let { if (it > 0) it.toString() else "" }
         }
     }
 }
