@@ -34,7 +34,8 @@ It consists of three major modules: app, core, and feature.
 ## Roadmap
 
 - [ ] Cache for improving performance
-- [ ] reply, repost
+- [x] reply, repost
+- [ ] quote 
 - [ ] user settings
 - [ ] search
 - [ ] multi-account
