@@ -76,10 +76,12 @@ class PostDetailScreen(
                         }
                     }
                 )
-            }
+            },
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 8.dp).padding(it)
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 16.dp)
+                    .padding(it)
             ) {
                 PostDetailHeader(navigator = navigator)
                 Spacer(modifier = Modifier.height(8.dp))
