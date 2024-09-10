@@ -27,4 +27,13 @@ class PostRepositoryImpl(
         input: CreateRecordInput
     ): Either<RequestErrorResponse, CreateRecordResponse> =
         blueskyApiDataSource.createRecord(identifier, collection, rkey, validate, input)
+
+    override suspend fun createRepost(
+        identifier: String,
+        collection: String,
+        rkey: String?,
+        validate: Boolean,
+        input: CreateRecordInput
+    ): Either<RequestErrorResponse, CreateRecordResponse> =
+        blueskyApiDataSource.createRecord(identifier, collection, rkey, validate, input)
 }

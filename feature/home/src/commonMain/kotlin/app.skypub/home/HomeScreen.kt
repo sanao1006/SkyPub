@@ -27,8 +27,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,9 +39,13 @@ import androidx.compose.ui.layout.ContentScale
 import app.skypub.common.ProfileUiState
 import app.skypub.common.ScreenType
 import app.skypub.composables.ContentIcons
+import app.skypub.composables.RepostBottomSheet
+import app.skypub.composables.RepostItem
 import app.skypub.navigation.SharedScreen
 import app.skypub.navigation.UserScreen
+import app.skypub.network.model.Subject
 import app.skypub.post.PostScreen
+import app.skypub.post.PostViewModel
 import app.skypub.ui.BottomNavigationBarMenu
 import app.skypub.ui.DrawerContent
 import app.skypub.ui.ModalNavigationDrawerWrapper
@@ -62,6 +68,7 @@ class HomeScreen(
     @Composable
     override fun Content() {
         val viewmodel: HomeViewModel = koinInject<HomeViewModel>()
+        val postViewModel: PostViewModel = koinInject<PostViewModel>()
         var selectedItem by remember { mutableIntStateOf(ScreenType.HOME.index) }
         val navigator = LocalNavigator.currentOrThrow
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -85,6 +92,8 @@ class HomeScreen(
         LaunchedEffect(feeds) {
             viewmodel.loadFeed()
         }
+        var openRepostModal by remember { mutableStateOf(false) }
+        var repostParam by rememberSaveable { mutableStateOf("" to "") }
         ModalNavigationDrawerWrapper(
             snackbarHostState = hostState,
             navigator = navigator,
@@ -182,9 +191,33 @@ class HomeScreen(
                             ContentIcons.FavoriteBorder -> viewmodel.like(identifier, uri, cid)
                             else -> {}
                         }
+                    },
+                    onRepostIconClick = { uri, cid ->
+                        repostParam = uri to cid
+                        openRepostModal = true
                     }
                 )
             }
+        }
+
+        if (openRepostModal) {
+            RepostBottomSheet(
+                onDismiss = { openRepostModal = it },
+                onclick = {
+                    when (it) {
+                        RepostItem.REPOST -> {
+                            postViewModel.createRepost(
+                                subject = Subject(
+                                    uri = repostParam.first,
+                                    cid = repostParam.second
+                                )
+                            )
+                        }
+
+//                        RepostItem.QUOTE -> {}
+                    }
+                }
+            )
         }
     }
 }
