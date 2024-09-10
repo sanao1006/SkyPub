@@ -24,6 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -31,9 +35,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.skypub.composables.ContentIcons
+import app.skypub.composables.RepostBottomSheet
+import app.skypub.composables.RepostItem
 import app.skypub.navigation.UserScreen
 import app.skypub.network.model.Post
 import app.skypub.network.model.Reply
+import app.skypub.network.model.Subject
 import cafe.adriel.voyager.core.registry.rememberScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -43,6 +50,7 @@ import com.github.panpf.sketch.AsyncImage
 import com.github.panpf.sketch.request.ComposableImageRequest
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.koin.compose.koinInject
 
 class PostDetailScreen(
     private val post: Post,
@@ -52,6 +60,9 @@ class PostDetailScreen(
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val viewModel: PostDetailScreenViewModel = koinInject<PostDetailScreenViewModel>()
+        var openRepostModal by rememberSaveable { mutableStateOf(false) }
+        var repostParam by rememberSaveable { mutableStateOf("" to "") }
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -75,9 +86,34 @@ class PostDetailScreen(
                 PostDetailContent()
                 HorizontalDivider()
                 Spacer(modifier = Modifier.height(12.dp))
-                PostDetailActions()
+                PostDetailActions(
+                    onRepostIconClick = { uri, cid ->
+                        repostParam = uri to cid
+                        openRepostModal = true
+                    }
+                )
                 Spacer(modifier = Modifier.height(12.dp))
                 HorizontalDivider()
+            }
+
+            if (openRepostModal) {
+                RepostBottomSheet(
+                    onDismiss = { openRepostModal = it },
+                    onclick = {
+                        when (it) {
+                            RepostItem.REPOST -> {
+                                viewModel.createRepost(
+                                    subject = Subject(
+                                        uri = repostParam.first,
+                                        cid = repostParam.second
+                                    )
+                                )
+                            }
+
+//                        RepostItem.QUOTE -> {}
+                        }
+                    }
+                )
             }
         }
     }
@@ -139,7 +175,10 @@ class PostDetailScreen(
     }
 
     @Composable
-    fun PostDetailActions(modifier: Modifier = Modifier) {
+    fun PostDetailActions(
+        modifier: Modifier = Modifier,
+        onRepostIconClick: (String, String) -> Unit = { _, _ -> }
+    ) {
         Row(
             modifier = modifier.fillMaxWidth(0.7f).padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -149,7 +188,21 @@ class PostDetailScreen(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.name,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp).clickable {
+                            when (item) {
+                                ContentIcons.ChatBubbleOutline -> {
+                                    // TODO
+                                }
+
+                                ContentIcons.Repeat -> {
+                                    onRepostIconClick(post.uri, post.cid)
+                                }
+
+                                ContentIcons.FavoriteBorder -> {
+                                    // TODO
+                                }
+                            }
+                        }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
