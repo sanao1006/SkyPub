@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -12,12 +13,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -121,21 +125,29 @@ class ReplyScreen(
                         }
                     }
                 )
-            }
+            },
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
         ) {
             Column(modifier = Modifier.padding(it)) {
                 ReplyPost(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     name = name,
                     thumbnail = thumbnail,
                     post = post
                 )
-                Spacer(modifier = Modifier.size(8.dp))
-
+                Spacer(modifier = Modifier.size(4.dp))
+                HorizontalDivider(
+                    modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(0.95f)
+                )
+                Spacer(modifier = Modifier.size(4.dp))
                 TextField(
                     modifier = Modifier.fillMaxSize().focusRequester(focusRequester),
                     value = text.value, onValueChange = { text.value = it },
-                    placeholder = { Text("Reply") }
+                    placeholder = { Text("Reply") },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                    )
                 )
             }
         }
