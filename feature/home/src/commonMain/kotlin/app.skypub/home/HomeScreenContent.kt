@@ -22,7 +22,7 @@ fun HomeScreenContent(
     navigator: Navigator,
     modifier: Modifier = Modifier,
     onIconClick: (ContentIcons, String, String, String) -> Unit,
-    onRepostIconClick: () -> Unit = {}
+    onRepostIconClick: (String, String) -> Unit
 ) {
     Box(
         modifier = modifier,
@@ -45,7 +45,7 @@ fun HomeScreenContent(
                         modifier = Modifier
                             .padding(top = 12.dp),
                         onIconClick = onIconClick,
-                        onRepostIconClick = onRepostIconClick
+                        onRepostIconClick = { uri, cid -> onRepostIconClick(uri, cid) }
                     )
                 }
             }

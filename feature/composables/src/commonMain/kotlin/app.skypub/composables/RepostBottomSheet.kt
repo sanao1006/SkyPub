@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -61,5 +60,5 @@ fun RepostBottomSheet(
 
 enum class RepostItem(val value: String, val icon: ImageVector) {
     REPOST("Repost", Icons.Default.Repeat),
-    QUOTE("Quote", Icons.Default.FormatQuote),
+//    QUOTE("Quote", Icons.Default.FormatQuote),
 }

@@ -22,13 +22,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import app.skypub.composables.RepostBottomSheet
+import app.skypub.composables.RepostItem
 import app.skypub.composables.TimeLinePostItem
+import app.skypub.network.model.Subject
 import app.skypub.ui.ScaffoldScreenContent
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -47,6 +50,7 @@ class UserDetailScreen(private val handle: String) : Screen {
         val state = viewmodel.uiState.collectAsState().value
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         var openRepostModal by remember { mutableStateOf(false) }
+        var repostParam by rememberSaveable { mutableStateOf("" to "") }
         LaunchedEffect(Unit) {
             viewmodel.getUiState(handle)
         }
@@ -91,7 +95,10 @@ class UserDetailScreen(private val handle: String) : Screen {
                                 feed = feed,
                                 modifier = Modifier.padding(top = 8.dp, bottom = 2.dp),
                                 onIconClick = { _, _, _, _ -> },
-                                onRepostIconClick = { openRepostModal = true }
+                                onRepostIconClick = { uid, cid ->
+                                    repostParam = uid to cid
+                                    openRepostModal = true
+                                }
                             )
                         }
                     }
@@ -100,7 +107,19 @@ class UserDetailScreen(private val handle: String) : Screen {
         }
         if (openRepostModal) {
             RepostBottomSheet(
-                onDismiss = { openRepostModal = it }
+                onDismiss = { openRepostModal = it },
+                onclick = {
+                    when (it) {
+                        RepostItem.REPOST -> {
+                            viewmodel.createRepost(
+                                subject = Subject(
+                                    uri = repostParam.first,
+                                    cid = repostParam.second
+                                )
+                            )
+                        }
+                    }
+                }
             )
         }
     }

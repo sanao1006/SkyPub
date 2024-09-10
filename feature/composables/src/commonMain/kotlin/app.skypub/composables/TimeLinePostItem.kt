@@ -47,7 +47,7 @@ fun TimeLinePostItem(
     feed: FeedItem,
     modifier: Modifier = Modifier,
     onIconClick: (ContentIcons, String, String, String) -> Unit,
-    onRepostIconClick: () -> Unit = {}
+    onRepostIconClick: (String, String) -> Unit
 ) {
     val userDetailScreen = rememberScreen(
         UserScreen.UserDetail(feed.post.author.handle)
@@ -113,7 +113,7 @@ fun TimeLinePostItem(
                 feed = feed,
                 onFavIconClick = onIconClick,
                 onReplyIconClick = { navigator.push(replyScreen) },
-                onRepostIconClick = onRepostIconClick
+                onRepostIconClick = { onRepostIconClick(feed.post.uri, feed.post.cid) }
             )
         }
     }

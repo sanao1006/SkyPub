@@ -15,6 +15,12 @@ data class ReplyRef(
 )
 
 @Serializable
+data class RepostRef(
+    val subject: Subject,
+    val createdAt: String
+)
+
+@Serializable
 data class Ref(
     val uri: String,
     val cid: String
