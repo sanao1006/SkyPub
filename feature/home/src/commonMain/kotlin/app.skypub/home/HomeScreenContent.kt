@@ -21,7 +21,8 @@ fun HomeScreenContent(
     feeds: List<FeedItem>,
     navigator: Navigator,
     modifier: Modifier = Modifier,
-    onIconClick: (ContentIcons, String, String, String) -> Unit
+    onIconClick: (ContentIcons, String, String, String) -> Unit,
+    onRepostIconClick: (String, String) -> Unit
 ) {
     Box(
         modifier = modifier,
@@ -43,7 +44,8 @@ fun HomeScreenContent(
                         feed = feed,
                         modifier = Modifier
                             .padding(top = 12.dp),
-                        onIconClick = onIconClick
+                        onIconClick = onIconClick,
+                        onRepostIconClick = { uri, cid -> onRepostIconClick(uri, cid) }
                     )
                 }
             }

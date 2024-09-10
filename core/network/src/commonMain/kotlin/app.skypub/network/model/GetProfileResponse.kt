@@ -7,7 +7,7 @@ data class GetProfileResponse(
     val did: String,
     val handle: String,
     val displayName: String,
-    val description: String,
+    val description: String? = null,
     val avatar: String,
     val banner: String? = null,
     val followersCount: Int,
