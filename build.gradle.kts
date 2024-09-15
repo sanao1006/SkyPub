@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinXserialization) apply false
     alias(libs.plugins.firebase) apply false
+    alias(libs.plugins.roborazzi) apply false
+    alias(libs.plugins.ksp) apply false
 //    alias(libs.plugins.jetbrains.kotlin.android) apply false
 }
 

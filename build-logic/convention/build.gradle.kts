@@ -27,13 +27,17 @@ tasks {
 
 gradlePlugin {
     plugins {
-        register("kotlinMultiplatform"){
+        register("kotlinMultiplatform") {
             id = "app.skypub.convention.kotlinMultiplatform"
             implementationClass = "KotlinMultiplatformConventionPlugin"
         }
-        register("composeMultiplatform"){
+        register("composeMultiplatform") {
             id = "app.skypub.convention.composeMultiplatform"
             implementationClass = "ComposeMultiPlatformConventionPlugin"
+        }
+        register("roborazzi") {
+            id = "app.skypub.convention.roborazzi"
+            implementationClass = "RoborazziPlugin"
         }
     }
 }
